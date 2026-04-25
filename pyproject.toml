@@ -13,6 +13,7 @@ classifiers = [
     "Programming Language :: Python :: 3",
 ]
 dependencies = [
+    "pyronear-station",
     "typer",
 ]
 
@@ -31,6 +32,9 @@ dev = [
 [tool.uv.workspace]
 members = ["packages/*"]
 
+[tool.uv.sources]
+pyronear-station = { workspace = true }
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
@@ -40,7 +44,7 @@ packages = ["src/analytics"]
 
 [tool.mypy]
 python_version = "3.14"
-files = ["src/analytics", "tests"]
+files = ["src/analytics", "packages/station/src/station", "packages/station/tests", "tests"]
 disallow_untyped_defs = true
 disallow_any_unimported = true
 no_implicit_optional = true
@@ -85,6 +89,7 @@ ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**/*.py" = ["S101"]
+"packages/*/tests/**/*.py" = ["S101"]
 
 [tool.ruff.format]
 preview = true
