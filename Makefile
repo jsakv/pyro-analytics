@@ -16,7 +16,7 @@ test:
 	uv run pytest
 
 test-cov:
-	uv run pytest --cov=analytics
+	uv run pytest --cov=packages
 
 check:
 	uv run ruff format . --check

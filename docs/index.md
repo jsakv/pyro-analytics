@@ -1,5 +1,9 @@
 # Pyronear Analytics Documentation
 
+## Workspace layout
+
+`pyro-analytics` is a uv workspace root. Shared tooling lives at the root, and domain packages belong under `packages/*`.
+
 ## Local docs workflow
 
 ```bash
