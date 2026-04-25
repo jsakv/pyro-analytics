@@ -36,6 +36,7 @@ uv run analytics --help
 
 - `src/analytics/`: repository CLI package and Typer app entrypoint
 - `packages/`: workspace packages, added as `packages/*`
+- `packages/station/`: reusable station map publisher library
 - `tests/`: root CLI and workspace configuration tests
 - `pyproject.toml`: lint/type/test/coverage configuration
 
