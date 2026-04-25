@@ -1,27 +1,18 @@
 [project]
 name = "pyro-analytics"
 version = "0.1.0"
-description = "Pyronear Analytics tools for wildfire data analysis and operational insight."
+description = "Pyronear Analytics workspace for wildfire data analysis tooling."
 readme = "README.md"
 requires-python = ">=3.14,<3.15"
 authors = [{ name = "Pyronear <contact@pyronear.org>", email = "contact@pyronear.org" }]
-keywords = ["python", "uv", "library"]
+keywords = ["python", "uv", "workspace"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
 ]
-dependencies = [
-    "geojson-pydantic",
-    "h3",
-    "httpx",
-    "orjson",
-    "polars",
-    "polars-h3",
-    "pydantic",
-    "typer",
-]
+dependencies = []
 
 [dependency-groups]
 dev = [
@@ -32,16 +23,15 @@ dev = [
     "ruff>=0.9.2",
 ]
 
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+[tool.uv]
+package = false
 
-[tool.hatch.build.targets.wheel]
-packages = ["src/analytics"]
+[tool.uv.workspace]
+members = ["packages/*"]
 
 [tool.mypy]
 python_version = "3.14"
-files = ["src/analytics"]
+files = ["tests"]
 disallow_untyped_defs = true
 disallow_any_unimported = true
 no_implicit_optional = true
@@ -52,8 +42,7 @@ show_error_codes = true
 
 [tool.pytest.ini_options]
 addopts = ["--import-mode=importlib"]
-pythonpath = ["src"]
-testpaths = ["tests"]
+testpaths = ["tests", "packages"]
 
 [tool.ruff]
 # Keep py39 to mirror shared lint rule intent from pyproject 2 defaults.
@@ -96,4 +85,4 @@ skip_empty = true
 
 [tool.coverage.run]
 branch = true
-source = ["analytics"]
+source = ["packages"]
