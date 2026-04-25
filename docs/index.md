@@ -2,7 +2,7 @@
 
 ## Workspace layout
 
-`pyro-analytics` is a uv workspace root. Shared tooling lives at the root, and domain packages belong under `packages/*`.
+`pyro-analytics` is a uv workspace root. The root `src/analytics` package owns the Typer CLI, shared tooling lives at the root, and domain packages belong under `packages/*`.
 
 ## Local docs workflow
 

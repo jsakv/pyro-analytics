@@ -1,6 +1,6 @@
 # Pyronear Analytics Workspace
 
-Pyronear Analytics is a uv workspace for wildfire data analysis and operational insight packages.
+Pyronear Analytics is a uv workspace for wildfire data analysis and operational insight packages. The root `analytics` package owns the repository CLI, while domain libraries live under `packages/*`.
 
 ## Requirements
 
@@ -28,22 +28,24 @@ uv run pytest
 uv run ruff format .
 uv run ruff check .
 uv run mypy
-uv run pytest --cov=packages
+uv run pytest --cov=analytics --cov=packages
+uv run analytics --help
 ```
 
 ## Package layout
 
+- `src/analytics/`: repository CLI package and Typer app entrypoint
 - `packages/`: workspace packages, added as `packages/*`
-- `tests/`: root workspace configuration tests
+- `tests/`: root CLI and workspace configuration tests
 - `pyproject.toml`: lint/type/test/coverage configuration
 
-The root project is not an installable package. Domain implementation belongs in workspace members under `packages/*`.
+The root `analytics` package is command wiring only. Domain implementation belongs in workspace members under `packages/*`.
 
 ## Lint and type policy
 
 This scaffold preserves strict defaults aligned with the `pyproject 2` ruleset intent:
 - Ruff lint profile remains strict with `target-version = "py39"` for conservative compatibility.
 - Mypy strict settings are enabled by default.
-- Coverage is configured with branch tracking and workspace package source filtering.
+- Coverage is configured with branch tracking for the root CLI package and workspace package source filtering.
 
 If you relax any strictness defaults, document the rationale in this README to keep team expectations explicit.
