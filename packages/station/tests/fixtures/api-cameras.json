@@ -1,0 +1,61 @@
+[
+  {
+    "elevation": 640.0,
+    "lat": 43.6122,
+    "lon": 3.8849,
+    "organization_id": 101,
+    "name": "synthetic-montpellier-north",
+    "angle_of_view": 110.0,
+    "is_trustable": true,
+    "id": 1001,
+    "last_active_at": "2026-04-20T08:15:00Z",
+    "last_image": null,
+    "created_at": "2026-01-10T09:00:00Z",
+    "poses": [
+      {
+        "azimuth": 45.0,
+        "patrol_id": null,
+        "id": 5001,
+        "camera_id": 1001
+      }
+    ],
+    "last_image_url": null
+  },
+  {
+    "elevation": 720.0,
+    "lat": 43.6895,
+    "lon": 3.8627,
+    "organization_id": 101,
+    "name": "synthetic-montpellier-west",
+    "angle_of_view": 120.0,
+    "is_trustable": true,
+    "id": 1002,
+    "last_active_at": "2026-04-20T08:17:00Z",
+    "last_image": "synthetic/last-image-1002.jpg",
+    "created_at": "2026-01-11T09:00:00Z",
+    "poses": [
+      {
+        "azimuth": 120.0,
+        "patrol_id": 12,
+        "id": 5002,
+        "camera_id": 1002
+      }
+    ],
+    "last_image_url": null
+  },
+  {
+    "elevation": 530.0,
+    "lat": 43.2965,
+    "lon": 5.3698,
+    "organization_id": 202,
+    "name": "synthetic-marseille-east",
+    "angle_of_view": 95.0,
+    "is_trustable": true,
+    "id": 1003,
+    "last_active_at": null,
+    "last_image": null,
+    "created_at": "2026-02-02T11:30:00Z",
+    "poses": [],
+    "last_image_url": null
+  }
+]
