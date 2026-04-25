@@ -8,6 +8,29 @@
 
 `packages/station` owns reusable station map publisher library code. It must remain independent from root CLI wiring in `analytics`.
 
+## Station publish CLI
+
+The root CLI delegates station map publishing to the `station` package:
+
+```bash
+uv run analytics station publish --source fixture --fixture-path packages/station/tests/fixtures/api-cameras.json --output station-cells.geojson
+```
+
+For API-backed S3 publication, configure the environment before running:
+
+```bash
+PYRONEAR_API_URL=https://alertapi.pyronear.org \
+PYRONEAR_API_TOKEN=... \
+STATION_MAP_S3_ENDPOINT_URL=http://localhost:9000 \
+STATION_MAP_S3_REGION=us-east-1 \
+STATION_MAP_S3_BUCKET=pyronear-public-map-local \
+STATION_MAP_S3_ACCESS_KEY_ID=... \
+STATION_MAP_S3_SECRET_ACCESS_KEY=... \
+uv run analytics station publish --source api
+```
+
+The command prints only summary counts and artifact metadata. It must not print credentials, exact source coordinates, or raw API records.
+
 ## Local docs workflow
 
 ```bash
