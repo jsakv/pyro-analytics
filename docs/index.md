@@ -31,6 +31,8 @@ uv run analytics station publish --source api
 
 The command prints only summary counts and artifact metadata. It must not print credentials, exact source coordinates, or raw API records.
 
+For the full manual workflow, environment variables, MinIO notes, object key policy, and privacy review checklist, see [Station Publisher Runbook](station-publisher-runbook.md).
+
 ## Local docs workflow
 
 ```bash
@@ -44,4 +46,5 @@ uv run pytest
 uv run ruff format . --check
 uv run ruff check .
 uv run mypy
+uv run pytest
 ```

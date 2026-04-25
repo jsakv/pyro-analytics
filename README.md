@@ -22,6 +22,16 @@ uv sync
 uv run pytest
 ```
 
+## Station publisher
+
+The root CLI exposes station map publication while domain logic stays in `packages/station`:
+
+```bash
+uv run analytics station publish --source fixture --fixture-path packages/station/tests/fixtures/api-cameras.json --output station-cells.geojson
+```
+
+For API-backed publishing, S3-compatible settings, MinIO notes, object key policy, and the manual runbook, see [docs/station-publisher-runbook.md](docs/station-publisher-runbook.md).
+
 ## Development workflow
 
 ```bash
