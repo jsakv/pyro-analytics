@@ -75,8 +75,8 @@ class Result(BaseModel):
 
     model_config = ConfigDict(extra="forbid", frozen=True)
 
-    station_count: int = Field(ge=0)
-    cell_count: int = Field(ge=0)
+    station_count: int = Field(default=0, ge=0)
+    cell_count: int = Field(default=0, ge=0)
     artifact_key: str = Field(default="station-cells.geojson", min_length=1)
     published: bool = False
     bucket: str | None = None
