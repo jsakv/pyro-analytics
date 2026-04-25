@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 import pytest
@@ -14,6 +15,12 @@ import analytics.cli
 from analytics.cli import app
 
 FIXTURES_ROOT = Path(__file__).parents[2] / "packages" / "station" / "tests" / "fixtures"
+ANSI_PATTERN = re.compile(r"\x1b\[[0-9;]*m")
+
+
+def plain_output(output: str) -> str:
+    """Remove ANSI styling from Typer/Rich test output."""
+    return ANSI_PATTERN.sub("", output)
 
 
 def test_import_analytics_package() -> None:
@@ -32,11 +39,12 @@ def test_cli_help() -> None:
 def test_station_publish_help() -> None:
     """The station publish command should expose source and local output options."""
     result = CliRunner().invoke(app, ["station", "publish", "--help"])
+    output = plain_output(result.output)
 
     assert result.exit_code == 0
-    assert "--source" in result.output
-    assert "--fixture-path" in result.output
-    assert "--output" in result.output
+    assert "--source" in output
+    assert "--fixture-path" in output
+    assert "--output" in output
 
 
 def test_station_publish_fixture_writes_local_artifact(tmp_path: Path) -> None:
@@ -97,9 +105,10 @@ def test_station_publish_delegates_to_station_publish(monkeypatch: pytest.Monkey
 def test_station_publish_fixture_requires_path() -> None:
     """Fixture source should fail clearly without a fixture path."""
     result = CliRunner().invoke(app, ["station", "publish", "--source", "fixture"])
+    output = plain_output(result.output)
 
     assert result.exit_code == 2
-    assert "--fixture-path" in result.output
+    assert "--fixture-path" in output
 
 
 def test_station_publish_maps_domain_failure_to_exit(monkeypatch: pytest.MonkeyPatch) -> None:
