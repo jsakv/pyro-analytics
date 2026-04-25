@@ -30,6 +30,8 @@ The root CLI exposes station map publication while domain logic stays in `packag
 uv run analytics station publish --source fixture --fixture-path packages/station/tests/fixtures/api-cameras.json --output station-cells.geojson
 ```
 
+For a larger map demo, use `examples/station/demo-api-cameras.json`. It contains 60 synthetic camera records across fire-prone forest regions in France, Spain, and Germany.
+
 For API-backed publishing, S3-compatible settings, MinIO notes, object key policy, and the manual runbook, see [docs/station-publisher-runbook.md](docs/station-publisher-runbook.md).
 
 ## Development workflow

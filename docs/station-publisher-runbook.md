@@ -49,6 +49,15 @@ Expected output shape:
 fetched=3 published=2 uploaded=1 artifact=station-cells.geojson
 ```
 
+For a larger demo map, use the example dataset:
+
+```bash
+uv run analytics station publish \
+  --source fixture \
+  --fixture-path examples/station/demo-api-cameras.json \
+  --output station-cells.geojson
+```
+
 Before sharing the artifact, inspect it for private fields:
 
 ```bash
