@@ -24,9 +24,12 @@ Raw camera coordinates and private source fields must never be published. Do not
 
 The default public precision is H3 resolution `5`. Review this before production release and whenever camera density materially changes.
 
+Cells containing one camera are shifted to a deterministic neighboring cell from `grid_disk(cell, 1)` before publication. This keeps singleton feature centers away from exact camera cells while preserving stable artifacts across repeated runs. Set `CAMERA_MAP_SINGLETON_CELL_SHIFT_SALT` in production so the neighbor choice is not derived from the public default.
+
 Review checklist:
 
 - Confirm the configured `CAMERA_MAP_H3_RESOLUTION` is coarse enough for the target geography.
+- Confirm singleton shifting remains enabled unless a private fixture comparison requires exact cells.
 - Confirm `CAMERA_MAP_PUBLIC_PROPERTIES` stays within the approved property allowlist.
 - Inspect a generated fixture artifact before uploading.
 - Treat any property change as a cross-repository contract change with `pyro-map`.
@@ -55,13 +58,15 @@ For a larger demo map, use the example dataset:
 uv run analytics cameras publish \
   --source fixture \
   --fixture-path examples/cameras/demo-api-cameras.json \
-  --output camera-cells.geojson
+  --output examples/cameras/demo-camera-cells.geojson
 ```
+
+The committed demo source contains 66 synthetic cameras and intentionally includes dense H3 cells with 2, 3, and 4 cameras so map density styling can be reviewed without live API access.
 
 Before sharing the artifact, inspect it for private fields:
 
 ```bash
-rg '"lat"|"lon"|"name"|"organization_id"|"last_image"' camera-cells.geojson
+rg '"lat"|"lon"|"name"|"organization_id"|"last_image"' examples/cameras/demo-camera-cells.geojson
 ```
 
 The search should return no matches.
@@ -88,6 +93,8 @@ Required settings:
 | `PYRONEAR_API_URL` | Pyronear Alert API base URL | No |
 | `PYRONEAR_API_TOKEN` | Bearer token for camera reads | Yes |
 | `CAMERA_MAP_H3_RESOLUTION` | Optional H3 publish resolution, default `5` | No |
+| `CAMERA_MAP_SINGLETON_CELL_SHIFT_ENABLED` | Optional singleton privacy shift flag, default `true` | No |
+| `CAMERA_MAP_SINGLETON_CELL_SHIFT_SALT` | Optional salt for deterministic singleton neighbor selection | Yes |
 | `CAMERA_MAP_PUBLIC_PROPERTIES` | Optional comma-separated public fields | No |
 | `CAMERA_MAP_S3_ENDPOINT_URL` | S3 or MinIO-compatible endpoint URL | No |
 | `CAMERA_MAP_S3_REGION` | S3 region name | No |

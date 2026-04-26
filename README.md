@@ -30,7 +30,9 @@ The root CLI exposes camera map publication while domain logic stays in `package
 uv run analytics cameras publish --source fixture --fixture-path packages/cameras/tests/fixtures/api-cameras.json --output camera-cells.geojson
 ```
 
-For a larger map demo, use `examples/cameras/demo-api-cameras.json`. It contains 60 synthetic camera records across fire-prone forest regions in France, Spain, and Germany.
+For a larger map demo, use `examples/cameras/demo-api-cameras.json` or the generated `examples/cameras/demo-camera-cells.geojson`. The demo source contains 66 synthetic camera records across fire-prone forest regions in France, Spain, and Germany, with dense cells containing 2, 3, and 4 cameras.
+
+Singleton camera cells are published as deterministic neighboring H3 cells by default, with `CAMERA_MAP_SINGLETON_CELL_SHIFT_SALT` available for production salt configuration.
 
 For API-backed publishing, S3-compatible settings, MinIO notes, object key policy, and the manual runbook, see [docs/camera-publisher-runbook.md](docs/camera-publisher-runbook.md).
 
