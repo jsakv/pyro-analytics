@@ -17,8 +17,8 @@
       },
       "properties": {
         "cell": "85396973fffffff",
-        "station_count": 2,
-        "station_count_bucket": "2-5"
+        "camera_count": 2,
+        "camera_count_bucket": "2-5"
       }
     },
     {
@@ -37,8 +37,8 @@
       },
       "properties": {
         "cell": "853968b3fffffff",
-        "station_count": 1,
-        "station_count_bucket": "1"
+        "camera_count": 1,
+        "camera_count_bucket": "1"
       }
     }
   ]
