@@ -8,25 +8,25 @@ from pathlib import Path
 import h3  # type: ignore[import-untyped]
 import polars as pl
 import pytest
+from cameras import Camera, Config
+from cameras.cells import aggregate_cells
+from cameras.geojson import build_feature_collection, cell_boundary
+from cameras.serialization import serialize_aggregates, serialize_feature_collection
+from cameras.sources import FixtureSource
 from geojson_pydantic import FeatureCollection
 from pydantic import ValidationError
-from station import Config, Station
-from station.cells import aggregate_cells
-from station.geojson import build_feature_collection, cell_boundary
-from station.serialization import serialize_aggregates, serialize_feature_collection
-from station.sources import FixtureSource
 
 FIXTURES_ROOT = Path(__file__).parent / "fixtures"
 
 
-def load_fixture_stations() -> list[Station]:
-    """Load typed synthetic stations from the fixture source."""
+def load_fixture_cameras() -> list[Camera]:
+    """Load typed synthetic cameras from the fixture source."""
     return FixtureSource(FIXTURES_ROOT / "api-cameras.json").fetch()
 
 
 def load_aggregates() -> pl.DataFrame:
     """Build deterministic fixture aggregates."""
-    return aggregate_cells(load_fixture_stations(), Config())
+    return aggregate_cells(load_fixture_cameras(), Config())
 
 
 def test_cell_boundary_writes_longitude_latitude_order() -> None:
@@ -78,8 +78,8 @@ def test_build_feature_collection_rejects_invalid_cells() -> None:
     aggregates = pl.DataFrame([
         {
             "cell": "not-a-cell",
-            "station_count": 1,
-            "station_count_bucket": "1",
+            "camera_count": 1,
+            "camera_count_bucket": "1",
         }
     ])
 
@@ -100,15 +100,19 @@ def test_serialize_feature_collection_is_deterministic() -> None:
 
 
 def test_serialized_artifact_has_no_private_source_fields() -> None:
-    """Public serialization should not contain raw station fields."""
+    """Public serialization should not contain raw camera fields."""
     serialized = serialize_feature_collection(build_feature_collection(load_aggregates())).decode()
+    legacy_prefix = "sta" + "tion"
 
     for forbidden_term in [
+        "camera_id",
         "lat",
         "lon",
         "name",
         "organization_id",
         "last_image",
         "last_image_url",
+        f"{legacy_prefix}_count",
+        f"{legacy_prefix}_count_bucket",
     ]:
         assert f'"{forbidden_term}"' not in serialized

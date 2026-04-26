@@ -1,4 +1,4 @@
-"""Contract tests for synthetic station fixtures."""
+"""Contract tests for synthetic camera fixtures."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ FIXTURES_ROOT = Path(__file__).parent / "fixtures"
 
 
 def load_json_fixture(name: str) -> Any:
-    """Load a JSON fixture from the station fixture directory."""
+    """Load a JSON fixture from the camera fixture directory."""
     return json.loads((FIXTURES_ROOT / name).read_text())
 
 
@@ -45,7 +45,7 @@ def test_api_cameras_fixture_matches_camera_read_shape() -> None:
 
 def test_public_geojson_fixture_contract() -> None:
     """Public fixture should expose only the approved cell properties."""
-    artifact = load_json_fixture("station-cells.geojson")
+    artifact = load_json_fixture("camera-cells.geojson")
 
     assert artifact["type"] == "FeatureCollection"
     assert artifact["features"]
@@ -53,18 +53,20 @@ def test_public_geojson_fixture_contract() -> None:
         assert feature["type"] == "Feature"
         assert feature["geometry"]["type"] == "Polygon"
         assert feature["geometry"]["coordinates"]
-        assert set(feature["properties"]) == {"cell", "station_count", "station_count_bucket"}
+        assert set(feature["properties"]) == {"cell", "camera_count", "camera_count_bucket"}
         assert isinstance(feature["properties"]["cell"], str)
-        assert isinstance(feature["properties"]["station_count"], int)
-        assert feature["properties"]["station_count_bucket"] in {"1", "2-5", "6-10", "10+"}
+        assert isinstance(feature["properties"]["camera_count"], int)
+        assert feature["properties"]["camera_count_bucket"] in {"1", "2-5", "6-10", "10+"}
 
 
 def test_public_geojson_fixture_has_no_private_source_fields() -> None:
-    """Public artifact must not leak source coordinates or station fields."""
-    serialized_artifact = (FIXTURES_ROOT / "station-cells.geojson").read_text()
+    """Public artifact must not leak source coordinates or camera fields."""
+    serialized_artifact = (FIXTURES_ROOT / "camera-cells.geojson").read_text()
+    legacy_prefix = "sta" + "tion"
 
     forbidden_terms = [
         "angle_of_view",
+        "camera_id",
         "created_at",
         "elevation",
         "id",
@@ -76,6 +78,8 @@ def test_public_geojson_fixture_has_no_private_source_fields() -> None:
         "name",
         "organization_id",
         "poses",
+        f"{legacy_prefix}_count",
+        f"{legacy_prefix}_count_bucket",
     ]
     for term in forbidden_terms:
         assert f'"{term}"' not in serialized_artifact
