@@ -1,19 +1,19 @@
 # Pyronear API Source Contract Notes
 
-The station API source follows the current Pyronear Alert API camera read contract:
+The camera API source follows the current Pyronear Alert API camera read contract:
 
 - Base URL is configured with `PYRONEAR_API_URL`.
 - Bearer token is configured with `PYRONEAR_API_TOKEN`.
 - Camera records are fetched with `GET /api/v1/cameras/`.
 - The endpoint returns a JSON array of `CameraRead` records.
-- The adapter normalizes each record into `station.Station`.
+- The adapter normalizes each record into `cameras.Camera`.
 
 The adapter does not call `GET /api/v1/login/validate` before fetching cameras. It lets the cameras endpoint return the authoritative HTTP status so tests and future CLI output can report a single failure point.
 
 Current contract assumptions:
 
 - `PYRONEAR_API_URL` may be either the API host root, such as `https://alertapi.pyronear.org`, or the versioned API root ending in `/api/v1`.
-- Only trustable cameras are fetched by default. The OpenAPI contract exposes `include_non_trustable=false` on `GET /api/v1/cameras/`; station map publication keeps that default until product requirements say otherwise.
+- Only trustable cameras are fetched by default. The OpenAPI contract exposes `include_non_trustable=false` on `GET /api/v1/cameras/`; camera map publication keeps that default until product requirements say otherwise.
 - Raw `CameraRead` payloads are private source data. Exact `lat` and `lon` fields may exist at this boundary but must not be serialized to public artifacts.
 
 References:

@@ -22,17 +22,17 @@ uv sync
 uv run pytest
 ```
 
-## Station publisher
+## Camera publisher
 
-The root CLI exposes station map publication while domain logic stays in `packages/station`:
+The root CLI exposes camera map publication while domain logic stays in `packages/cameras`:
 
 ```bash
-uv run analytics station publish --source fixture --fixture-path packages/station/tests/fixtures/api-cameras.json --output station-cells.geojson
+uv run analytics cameras publish --source fixture --fixture-path packages/cameras/tests/fixtures/api-cameras.json --output camera-cells.geojson
 ```
 
-For a larger map demo, use `examples/station/demo-api-cameras.json`. It contains 60 synthetic camera records across fire-prone forest regions in France, Spain, and Germany.
+For a larger map demo, use `examples/cameras/demo-api-cameras.json`. It contains 60 synthetic camera records across fire-prone forest regions in France, Spain, and Germany.
 
-For API-backed publishing, S3-compatible settings, MinIO notes, object key policy, and the manual runbook, see [docs/station-publisher-runbook.md](docs/station-publisher-runbook.md).
+For API-backed publishing, S3-compatible settings, MinIO notes, object key policy, and the manual runbook, see [docs/camera-publisher-runbook.md](docs/camera-publisher-runbook.md).
 
 ## Development workflow
 
@@ -48,7 +48,7 @@ uv run analytics --help
 
 - `src/analytics/`: repository CLI package and Typer app entrypoint
 - `packages/`: workspace packages, added as `packages/*`
-- `packages/station/`: reusable station map publisher library
+- `packages/cameras/`: reusable camera map publisher library
 - `tests/`: root CLI and workspace configuration tests
 - `pyproject.toml`: lint/type/test/coverage configuration
 
