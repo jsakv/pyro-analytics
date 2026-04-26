@@ -1,4 +1,4 @@
-"""Pyronear API station source adapter."""
+"""Pyronear API camera source adapter."""
 
 from __future__ import annotations
 
@@ -9,20 +9,20 @@ from typing import Any
 import httpx
 from pydantic import SecretStr, ValidationError
 
-from station.config import Config
-from station.schemas import Station
+from cameras.config import Config
+from cameras.schemas import Camera
 
 
 class ApiSource:
-    """Fetch private station records from the Pyronear Alert API."""
+    """Fetch private camera records from the Pyronear Alert API."""
 
     def __init__(self, config: Config, *, client: httpx.Client | None = None) -> None:
         self.api_url = _require_api_url(config)
         self.api_token = _require_api_token(config)
         self.client = client or httpx.Client(timeout=10.0)
 
-    def fetch(self) -> list[Station]:
-        """Fetch and normalize camera records into typed stations."""
+    def fetch(self) -> list[Camera]:
+        """Fetch and normalize camera records into typed cameras."""
         response = self._get_cameras()
         payload = self._decode_payload(response)
 
@@ -30,17 +30,17 @@ class ApiSource:
             msg = "pyro-api cameras response must be a JSON array."
             raise TypeError(msg)
 
-        stations: list[Station] = []
+        cameras: list[Camera] = []
         for index, record in enumerate(payload):
             if not isinstance(record, Mapping):
                 msg = f"pyro-api cameras response record {index} must be an object."
                 raise TypeError(msg)
             try:
-                stations.append(Station.model_validate(record))
+                cameras.append(Camera.model_validate(record))
             except ValidationError as exc:
                 msg = f"pyro-api cameras response record {index} is invalid."
                 raise ValueError(msg) from exc
-        return stations
+        return cameras
 
     def _get_cameras(self) -> httpx.Response:
         try:

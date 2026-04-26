@@ -1,4 +1,4 @@
-"""Fixture station source adapter."""
+"""Fixture camera source adapter."""
 
 from __future__ import annotations
 
@@ -8,33 +8,33 @@ from typing import Any
 
 from pydantic import ValidationError
 
-from station.schemas import Station
+from cameras.schemas import Camera
 
 
 class FixtureSource:
-    """Load synthetic station records from a local JSON fixture."""
+    """Load synthetic camera records from a local JSON fixture."""
 
     def __init__(self, path: Path | str) -> None:
         self.path = Path(path)
 
-    def fetch(self) -> list[Station]:
-        """Read and normalize fixture records into typed stations."""
+    def fetch(self) -> list[Camera]:
+        """Read and normalize fixture records into typed cameras."""
         payload = self._load_payload()
         if not isinstance(payload, list):
             msg = f"Fixture source {self.path} must contain a JSON array."
             raise TypeError(msg)
 
-        stations: list[Station] = []
+        cameras: list[Camera] = []
         for index, record in enumerate(payload):
             if not isinstance(record, dict):
                 msg = f"Fixture source {self.path} record {index} must be an object."
                 raise TypeError(msg)
             try:
-                stations.append(Station.model_validate(record))
+                cameras.append(Camera.model_validate(record))
             except ValidationError as exc:
                 msg = f"Fixture source {self.path} record {index} is invalid."
                 raise ValueError(msg) from exc
-        return stations
+        return cameras
 
     def _load_payload(self) -> Any:
         try:
