@@ -36,9 +36,7 @@ def main() -> None:
 
 @cameras_app.command("publish")
 def camera_publish(
-    source: Annotated[
-        SourceChoice, typer.Option("--source", help="Camera source to publish from.")
-    ] = SourceChoice.api,
+    source: Annotated[SourceChoice, typer.Option("--source", help="Camera source to publish from.")] = SourceChoice.api,
     fixture_path: Annotated[
         Path | None,
         typer.Option("--fixture-path", help="Fixture JSON file for fixture source."),
