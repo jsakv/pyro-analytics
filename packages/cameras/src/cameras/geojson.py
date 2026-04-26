@@ -9,7 +9,7 @@ import h3  # type: ignore[import-untyped]
 import polars as pl
 from geojson_pydantic import Feature, FeatureCollection
 
-from station.schemas import CellProperties
+from cameras.schemas import CellProperties
 
 Position = list[float]
 

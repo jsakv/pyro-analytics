@@ -1,4 +1,4 @@
-"""Configuration models for station map publishing."""
+"""Configuration models for camera map publishing."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict, Field, SecretStr, field_validator
 
-from station.privacy import DEFAULT_LOCATION_POLICY, LocationPolicy
+from cameras.privacy import DEFAULT_LOCATION_POLICY, LocationPolicy
 
 
 def _optional_env(environ: Mapping[str, str], name: str) -> str | None:
@@ -34,18 +34,18 @@ def _optional_path(environ: Mapping[str, str], name: str) -> Path | None:
 
 
 def _env_resolution(environ: Mapping[str, str]) -> int:
-    value = _optional_env(environ, "STATION_MAP_H3_RESOLUTION")
+    value = _optional_env(environ, "CAMERA_MAP_H3_RESOLUTION")
     if value is None:
         return DEFAULT_LOCATION_POLICY.resolution
     try:
         return int(value)
     except ValueError as exc:
-        msg = "STATION_MAP_H3_RESOLUTION must be an integer."
+        msg = "CAMERA_MAP_H3_RESOLUTION must be an integer."
         raise ValueError(msg) from exc
 
 
 def _env_public_properties(environ: Mapping[str, str]) -> tuple[str, ...]:
-    value = _optional_env(environ, "STATION_MAP_PUBLIC_PROPERTIES")
+    value = _optional_env(environ, "CAMERA_MAP_PUBLIC_PROPERTIES")
     if value is None:
         return DEFAULT_LOCATION_POLICY.public_properties
 
@@ -56,7 +56,7 @@ def _env_public_properties(environ: Mapping[str, str]) -> tuple[str, ...]:
 
 
 class Config(BaseModel):
-    """Typed station publisher configuration."""
+    """Typed camera publisher configuration."""
 
     model_config = ConfigDict(frozen=True)
 
@@ -67,7 +67,7 @@ class Config(BaseModel):
     s3_endpoint_url: str | None = None
     s3_region: str | None = None
     s3_bucket: str | None = None
-    s3_object_key: str = "station-cells.geojson"
+    s3_object_key: str = "camera-cells.geojson"
     s3_access_key_id: SecretStr | None = None
     s3_secret_access_key: SecretStr | None = None
 
@@ -79,8 +79,8 @@ class Config(BaseModel):
         if not stripped_value:
             msg = "s3_object_key must be non-empty."
             raise ValueError(msg)
-        if stripped_value != "station-cells.geojson":
-            msg = "s3_object_key must remain station-cells.geojson."
+        if stripped_value != "camera-cells.geojson":
+            msg = "s3_object_key must remain camera-cells.geojson."
             raise ValueError(msg)
         return stripped_value
 
@@ -96,7 +96,7 @@ class Config(BaseModel):
 
     @classmethod
     def from_env(cls, environ: Mapping[str, str] | None = None) -> Config:
-        """Load station configuration from environment variables."""
+        """Load camera configuration from environment variables."""
         source = os.environ if environ is None else environ
         location_policy = LocationPolicy(
             resolution=_env_resolution(source),
@@ -106,24 +106,24 @@ class Config(BaseModel):
         return cls(
             api_url=_optional_env(source, "PYRONEAR_API_URL"),
             api_token=_optional_secret(source, "PYRONEAR_API_TOKEN"),
-            fixture_path=_optional_path(source, "STATION_MAP_FIXTURE_PATH"),
+            fixture_path=_optional_path(source, "CAMERA_MAP_FIXTURE_PATH"),
             location_policy=location_policy,
-            s3_endpoint_url=_optional_env(source, "STATION_MAP_S3_ENDPOINT_URL"),
-            s3_region=_optional_env(source, "STATION_MAP_S3_REGION"),
-            s3_bucket=_optional_env(source, "STATION_MAP_S3_BUCKET"),
-            s3_object_key=_optional_env(source, "STATION_MAP_S3_OBJECT_KEY") or "station-cells.geojson",
-            s3_access_key_id=_optional_secret(source, "STATION_MAP_S3_ACCESS_KEY_ID"),
-            s3_secret_access_key=_optional_secret(source, "STATION_MAP_S3_SECRET_ACCESS_KEY"),
+            s3_endpoint_url=_optional_env(source, "CAMERA_MAP_S3_ENDPOINT_URL"),
+            s3_region=_optional_env(source, "CAMERA_MAP_S3_REGION"),
+            s3_bucket=_optional_env(source, "CAMERA_MAP_S3_BUCKET"),
+            s3_object_key=_optional_env(source, "CAMERA_MAP_S3_OBJECT_KEY") or "camera-cells.geojson",
+            s3_access_key_id=_optional_secret(source, "CAMERA_MAP_S3_ACCESS_KEY_ID"),
+            s3_secret_access_key=_optional_secret(source, "CAMERA_MAP_S3_SECRET_ACCESS_KEY"),
         )
 
     def require_upload_settings(self) -> None:
         """Fail before upload when required S3-compatible settings are missing."""
         required_settings = {
-            "STATION_MAP_S3_ENDPOINT_URL": self.s3_endpoint_url,
-            "STATION_MAP_S3_REGION": self.s3_region,
-            "STATION_MAP_S3_BUCKET": self.s3_bucket,
-            "STATION_MAP_S3_ACCESS_KEY_ID": self.s3_access_key_id,
-            "STATION_MAP_S3_SECRET_ACCESS_KEY": self.s3_secret_access_key,
+            "CAMERA_MAP_S3_ENDPOINT_URL": self.s3_endpoint_url,
+            "CAMERA_MAP_S3_REGION": self.s3_region,
+            "CAMERA_MAP_S3_BUCKET": self.s3_bucket,
+            "CAMERA_MAP_S3_ACCESS_KEY_ID": self.s3_access_key_id,
+            "CAMERA_MAP_S3_SECRET_ACCESS_KEY": self.s3_secret_access_key,
         }
         missing_settings = [name for name, value in required_settings.items() if value is None]
         if missing_settings:

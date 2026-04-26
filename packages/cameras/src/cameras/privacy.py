@@ -5,8 +5,8 @@ from __future__ import annotations
 from pydantic import BaseModel, ConfigDict, field_validator
 
 DEFAULT_PUBLISH_RESOLUTION = 5
-ALLOWED_PUBLIC_PROPERTIES = frozenset({"cell", "station_count", "station_count_bucket"})
-DEFAULT_PUBLIC_PROPERTIES = ("cell", "station_count", "station_count_bucket")
+ALLOWED_PUBLIC_PROPERTIES = frozenset({"cell", "camera_count", "camera_count_bucket"})
+DEFAULT_PUBLIC_PROPERTIES = ("cell", "camera_count", "camera_count_bucket")
 
 
 class LocationPolicy(BaseModel):

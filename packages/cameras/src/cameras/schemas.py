@@ -1,4 +1,4 @@
-"""Typed schemas for station source records and public artifacts."""
+"""Typed schemas for camera source records and public artifacts."""
 
 from __future__ import annotations
 
@@ -24,7 +24,7 @@ def _reject_raw_coordinate_fields(value: Any) -> Any:
 
 
 class Pose(BaseModel):
-    """Source pose record nested inside a station payload."""
+    """Source pose record nested inside a camera payload."""
 
     model_config = ConfigDict(extra="forbid", frozen=True)
 
@@ -34,8 +34,8 @@ class Pose(BaseModel):
     camera_id: int
 
 
-class Station(BaseModel):
-    """Private source station record with exact coordinates."""
+class Camera(BaseModel):
+    """Private source camera record with exact coordinates."""
 
     model_config = ConfigDict(extra="forbid", frozen=True)
 
@@ -55,13 +55,13 @@ class Station(BaseModel):
 
 
 class CellProperties(BaseModel):
-    """Public properties for one aggregated station cell."""
+    """Public properties for one aggregated camera cell."""
 
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     cell: str = Field(min_length=1)
-    station_count: int = Field(ge=1)
-    station_count_bucket: Literal["1", "2-5", "6-10", "10+"]
+    camera_count: int = Field(ge=1)
+    camera_count_bucket: Literal["1", "2-5", "6-10", "10+"]
 
     @model_validator(mode="before")
     @classmethod
@@ -71,13 +71,13 @@ class CellProperties(BaseModel):
 
 
 class Result(BaseModel):
-    """Outcome metadata returned by station publication."""
+    """Outcome metadata returned by camera publication."""
 
     model_config = ConfigDict(extra="forbid", frozen=True)
 
-    station_count: int = Field(default=0, ge=0)
+    camera_count: int = Field(default=0, ge=0)
     cell_count: int = Field(default=0, ge=0)
-    artifact_key: str = Field(default="station-cells.geojson", min_length=1)
+    artifact_key: str = Field(default="camera-cells.geojson", min_length=1)
     published: bool = False
     bucket: str | None = None
     endpoint_url: str | None = None
