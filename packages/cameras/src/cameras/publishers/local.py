@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from station.publishers.base import GEOJSON_CONTENT_TYPE
-from station.schemas import Result
+from cameras.publishers.base import GEOJSON_CONTENT_TYPE
+from cameras.schemas import Result
 
 
 class LocalPublisher:

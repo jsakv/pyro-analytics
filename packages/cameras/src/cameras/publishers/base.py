@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Protocol
 
-from station.schemas import Result
+from cameras.schemas import Result
 
 GEOJSON_CONTENT_TYPE = "application/geo+json"
 

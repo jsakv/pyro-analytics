@@ -9,9 +9,9 @@ import boto3  # type: ignore[import-untyped]
 from botocore.exceptions import BotoCoreError, ClientError  # type: ignore[import-untyped]
 from pydantic import SecretStr
 
-from station.config import Config
-from station.publishers.base import GEOJSON_CONTENT_TYPE
-from station.schemas import Result
+from cameras.config import Config
+from cameras.publishers.base import GEOJSON_CONTENT_TYPE
+from cameras.schemas import Result
 
 
 class S3Client(Protocol):
@@ -26,9 +26,9 @@ class S3Publisher:
 
     def __init__(self, config: Config, *, client: S3Client | None = None) -> None:
         config.require_upload_settings()
-        self.endpoint_url = _required(config.s3_endpoint_url, "STATION_MAP_S3_ENDPOINT_URL")
-        self.region = _required(config.s3_region, "STATION_MAP_S3_REGION")
-        self.bucket = _required(config.s3_bucket, "STATION_MAP_S3_BUCKET")
+        self.endpoint_url = _required(config.s3_endpoint_url, "CAMERA_MAP_S3_ENDPOINT_URL")
+        self.region = _required(config.s3_region, "CAMERA_MAP_S3_REGION")
+        self.bucket = _required(config.s3_bucket, "CAMERA_MAP_S3_BUCKET")
         self.object_key = config.s3_object_key
         self.client = client or _build_client(config)
 
@@ -63,14 +63,14 @@ class S3Publisher:
 
 
 def _build_client(config: Config) -> S3Client:
-    access_key = _required_secret(config.s3_access_key_id, "STATION_MAP_S3_ACCESS_KEY_ID")
-    secret_key = _required_secret(config.s3_secret_access_key, "STATION_MAP_S3_SECRET_ACCESS_KEY")
+    access_key = _required_secret(config.s3_access_key_id, "CAMERA_MAP_S3_ACCESS_KEY_ID")
+    secret_key = _required_secret(config.s3_secret_access_key, "CAMERA_MAP_S3_SECRET_ACCESS_KEY")
     return cast(
         S3Client,
         boto3.client(
             "s3",
-            endpoint_url=_required(config.s3_endpoint_url, "STATION_MAP_S3_ENDPOINT_URL"),
-            region_name=_required(config.s3_region, "STATION_MAP_S3_REGION"),
+            endpoint_url=_required(config.s3_endpoint_url, "CAMERA_MAP_S3_ENDPOINT_URL"),
+            region_name=_required(config.s3_region, "CAMERA_MAP_S3_REGION"),
             aws_access_key_id=access_key,
             aws_secret_access_key=secret_key,
         ),
