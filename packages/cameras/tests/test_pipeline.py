@@ -1,4 +1,4 @@
-"""End-to-end tests for the station publishing pipeline."""
+"""End-to-end tests for the camera publishing pipeline."""
 
 from __future__ import annotations
 
@@ -6,8 +6,8 @@ import json
 from pathlib import Path
 
 import pytest
-from station import Config, Result, Station, publish
-from station.publishers import GEOJSON_CONTENT_TYPE
+from cameras import Camera, Config, Result, publish
+from cameras.publishers import GEOJSON_CONTENT_TYPE
 
 FIXTURES_ROOT = Path(__file__).parent / "fixtures"
 
@@ -15,12 +15,12 @@ FIXTURES_ROOT = Path(__file__).parent / "fixtures"
 class FakeSource:
     """In-memory source for pipeline failure tests."""
 
-    def __init__(self, stations: list[Station]) -> None:
-        self.stations = stations
+    def __init__(self, cameras: list[Camera]) -> None:
+        self.cameras = cameras
 
-    def fetch(self) -> list[Station]:
-        """Return configured stations."""
-        return self.stations
+    def fetch(self) -> list[Camera]:
+        """Return configured cameras."""
+        return self.cameras
 
 
 class FakePublisher:
@@ -38,10 +38,10 @@ class FakePublisher:
         self.artifact = artifact
         self.content_type = content_type
         return Result(
-            artifact_key="station-cells.geojson",
+            artifact_key="camera-cells.geojson",
             published=True,
             bucket="memory",
-            endpoint_url="memory://station",
+            endpoint_url="memory://camera",
             etag="fake-etag",
         )
 
@@ -52,7 +52,7 @@ def fixture_config() -> Config:
 
 
 def test_publish_export_is_available() -> None:
-    """The station package should expose the library pipeline entrypoint."""
+    """The camera package should expose the library pipeline entrypoint."""
     assert callable(publish)
 
 
@@ -63,9 +63,9 @@ def test_publish_fixture_pipeline_with_fake_publisher() -> None:
     result = publish(fixture_config(), publisher=publisher)
 
     assert result.published is True
-    assert result.station_count == 3
+    assert result.camera_count == 3
     assert result.cell_count == 2
-    assert result.artifact_key == "station-cells.geojson"
+    assert result.artifact_key == "camera-cells.geojson"
     assert publisher.content_type == "application/geo+json"
     assert publisher.artifact is not None
     payload = json.loads(publisher.artifact)
@@ -110,7 +110,7 @@ def test_publish_fails_closed_on_invalid_fixture() -> None:
 
 def test_publish_fails_closed_on_invalid_transform_input() -> None:
     """Transform failures should stop before serialization and publishing."""
-    invalid_station = Station.model_construct(
+    invalid_camera = Camera.model_construct(
         id=1001,
         name="invalid-coordinate",
         lat=91.0,
@@ -128,7 +128,7 @@ def test_publish_fails_closed_on_invalid_transform_input() -> None:
     publisher = FakePublisher()
 
     with pytest.raises(ValueError, match="coordinates"):
-        publish(Config(), source=FakeSource([invalid_station]), publisher=publisher)
+        publish(Config(), source=FakeSource([invalid_camera]), publisher=publisher)
 
     assert publisher.artifact is None
 
@@ -141,7 +141,7 @@ def test_publish_fails_closed_on_serialization_error(monkeypatch: pytest.MonkeyP
         msg = "serialization failed"
         raise ValueError(msg)
 
-    monkeypatch.setattr("station.pipeline.serialize_aggregates", fail_serialize)
+    monkeypatch.setattr("cameras.pipeline.serialize_aggregates", fail_serialize)
 
     with pytest.raises(ValueError, match="serialization failed"):
         publish(fixture_config(), publisher=publisher)

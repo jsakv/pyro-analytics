@@ -1,4 +1,4 @@
-"""Tests for station artifact publishers."""
+"""Tests for camera artifact publishers."""
 
 from __future__ import annotations
 
@@ -7,9 +7,9 @@ from pathlib import Path
 
 import pytest
 from botocore.exceptions import ClientError  # type: ignore[import-untyped]
+from cameras import Config, Result
+from cameras.publishers import GEOJSON_CONTENT_TYPE, LocalPublisher, Publisher, S3Publisher
 from pydantic import SecretStr
-from station import Config, Result
-from station.publishers import GEOJSON_CONTENT_TYPE, LocalPublisher, Publisher, S3Publisher
 
 
 def secret(value: str) -> SecretStr:
@@ -23,7 +23,7 @@ def make_s3_config() -> Config:
         s3_endpoint_url="http://localhost:9000",
         s3_region="us-east-1",
         s3_bucket="pyronear-public-map-local",
-        s3_object_key="station-cells.geojson",
+        s3_object_key="camera-cells.geojson",
         s3_access_key_id=secret("minio-access"),
         s3_secret_access_key=secret("minio-secret"),
     )
@@ -47,7 +47,7 @@ class FakeS3Client:
 
 def test_local_publisher_matches_publisher_protocol(tmp_path: Path) -> None:
     """LocalPublisher should satisfy the publisher contract."""
-    publisher: Publisher = LocalPublisher(tmp_path / "station-cells.geojson")
+    publisher: Publisher = LocalPublisher(tmp_path / "camera-cells.geojson")
 
     result = publisher.publish(b'{"type":"FeatureCollection","features":[]}')
 
@@ -57,7 +57,7 @@ def test_local_publisher_matches_publisher_protocol(tmp_path: Path) -> None:
 def test_local_publisher_writes_artifact_bytes(tmp_path: Path) -> None:
     """Local staging should write exactly the artifact bytes provided."""
     artifact = b'{"type":"FeatureCollection","features":[]}'
-    path = tmp_path / "nested" / "station-cells.geojson"
+    path = tmp_path / "nested" / "camera-cells.geojson"
     publisher = LocalPublisher(path)
 
     result = publisher.publish(artifact)
@@ -69,7 +69,7 @@ def test_local_publisher_writes_artifact_bytes(tmp_path: Path) -> None:
 
 def test_local_publisher_rejects_empty_artifact(tmp_path: Path) -> None:
     """Publisher inputs should not accept empty artifacts."""
-    publisher = LocalPublisher(tmp_path / "station-cells.geojson")
+    publisher = LocalPublisher(tmp_path / "camera-cells.geojson")
 
     with pytest.raises(ValueError, match="non-empty"):
         publisher.publish(b"")
@@ -86,14 +86,14 @@ def test_s3_publisher_uploads_to_configured_bucket_and_key() -> None:
     assert client.calls == [
         {
             "Bucket": "pyronear-public-map-local",
-            "Key": "station-cells.geojson",
+            "Key": "camera-cells.geojson",
             "Body": artifact,
             "ContentType": GEOJSON_CONTENT_TYPE,
         }
     ]
     assert result.published is True
     assert result.bucket == "pyronear-public-map-local"
-    assert result.artifact_key == "station-cells.geojson"
+    assert result.artifact_key == "camera-cells.geojson"
     assert result.etag == '"synthetic-etag"'
 
 
@@ -121,7 +121,7 @@ def test_s3_publisher_missing_settings_fail_before_upload() -> None:
     """Missing upload config should fail before any S3 client call."""
     client = FakeS3Client()
 
-    with pytest.raises(ValueError, match="STATION_MAP_S3_ENDPOINT_URL"):
+    with pytest.raises(ValueError, match="CAMERA_MAP_S3_ENDPOINT_URL"):
         S3Publisher(Config(s3_bucket="pyronear-public-map-local"), client=client)
 
     assert client.calls == []

@@ -1,4 +1,4 @@
-"""Tests for the Pyronear API station source adapter."""
+"""Tests for the Pyronear API camera source adapter."""
 
 from __future__ import annotations
 
@@ -8,9 +8,9 @@ from pathlib import Path
 
 import httpx
 import pytest
+from cameras import Camera, Config
+from cameras.sources import ApiSource, Source
 from pydantic import SecretStr
-from station import Config, Station
-from station.sources import ApiSource, Source
 
 FIXTURES_ROOT = Path(__file__).parent / "fixtures"
 AUTH_VALUE = "synthetic-token"
@@ -39,16 +39,16 @@ def make_config() -> Config:
 
 
 def test_api_source_matches_source_protocol() -> None:
-    """ApiSource should satisfy the station source contract."""
+    """ApiSource should satisfy the camera source contract."""
 
     def handler(request: httpx.Request) -> httpx.Response:
         return httpx.Response(200, json=load_api_cameras())
 
     source: Source = ApiSource(make_config(), client=make_client(handler))
 
-    stations = source.fetch()
+    cameras = source.fetch()
 
-    assert all(isinstance(station, Station) for station in stations)
+    assert all(isinstance(camera, Camera) for camera in cameras)
 
 
 def test_api_source_fetches_cameras_with_bearer_token() -> None:
@@ -61,10 +61,10 @@ def test_api_source_fetches_cameras_with_bearer_token() -> None:
 
     source = ApiSource(make_config(), client=make_client(handler))
 
-    stations = source.fetch()
+    cameras = source.fetch()
 
-    assert len(stations) == 3
-    assert stations[0].id == 1001
+    assert len(cameras) == 3
+    assert cameras[0].id == 1001
     assert seen_requests[0].method == "GET"
     assert str(seen_requests[0].url) == "https://alertapi.pyronear.org/api/v1/cameras/"
     assert seen_requests[0].headers["Authorization"] == f"Bearer {AUTH_VALUE}"

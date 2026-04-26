@@ -1,4 +1,4 @@
-"""Tests for the fixture station source adapter."""
+"""Tests for the fixture camera source adapter."""
 
 from __future__ import annotations
 
@@ -6,32 +6,32 @@ import json
 from pathlib import Path
 
 import pytest
-from station import Station
-from station.sources import FixtureSource, Source
+from cameras import Camera
+from cameras.sources import FixtureSource, Source
 
 FIXTURES_ROOT = Path(__file__).parent / "fixtures"
 
 
 def test_fixture_source_matches_source_protocol() -> None:
-    """FixtureSource should satisfy the station source contract."""
+    """FixtureSource should satisfy the camera source contract."""
     source: Source = FixtureSource(FIXTURES_ROOT / "api-cameras.json")
 
-    stations = source.fetch()
+    cameras = source.fetch()
 
-    assert all(isinstance(station, Station) for station in stations)
+    assert all(isinstance(camera, Camera) for camera in cameras)
 
 
-def test_fixture_source_returns_typed_station_records() -> None:
-    """Valid fixture records should normalize into Station objects."""
+def test_fixture_source_returns_typed_camera_records() -> None:
+    """Valid fixture records should normalize into Camera objects."""
     source = FixtureSource(FIXTURES_ROOT / "api-cameras.json")
 
-    stations = source.fetch()
+    cameras = source.fetch()
 
-    assert len(stations) == 3
-    assert stations[0].id == 1001
-    assert stations[0].name == "synthetic-montpellier-north"
-    assert stations[0].lat == 43.6122
-    assert stations[0].lon == 3.8849
+    assert len(cameras) == 3
+    assert cameras[0].id == 1001
+    assert cameras[0].name == "synthetic-montpellier-north"
+    assert cameras[0].lat == 43.6122
+    assert cameras[0].lon == 3.8849
 
 
 def test_fixture_source_missing_file_fails_actionably(tmp_path: Path) -> None:
@@ -53,7 +53,7 @@ def test_fixture_source_invalid_json_fails_actionably(tmp_path: Path) -> None:
 
 
 def test_fixture_source_requires_json_array(tmp_path: Path) -> None:
-    """Fixture input should be an array of station records."""
+    """Fixture input should be an array of camera records."""
     fixture_path = tmp_path / "object.json"
     fixture_path.write_text(json.dumps({"id": 1001}))
     source = FixtureSource(fixture_path)
@@ -63,7 +63,7 @@ def test_fixture_source_requires_json_array(tmp_path: Path) -> None:
 
 
 def test_fixture_source_requires_object_records(tmp_path: Path) -> None:
-    """Each fixture item should be a station-like object."""
+    """Each fixture item should be a camera-like object."""
     fixture_path = tmp_path / "scalar-record.json"
     fixture_path.write_text(json.dumps([1001]))
     source = FixtureSource(fixture_path)
@@ -73,7 +73,7 @@ def test_fixture_source_requires_object_records(tmp_path: Path) -> None:
 
 
 def test_fixture_source_invalid_record_fails_actionably(tmp_path: Path) -> None:
-    """Station schema errors should identify the fixture record index."""
+    """Camera schema errors should identify the fixture record index."""
     fixture_path = tmp_path / "invalid-record.json"
     fixture_path.write_text(json.dumps([{"id": 1001, "lat": 91.0}]))
     source = FixtureSource(fixture_path)
