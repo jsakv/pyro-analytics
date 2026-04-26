@@ -33,6 +33,21 @@ def _optional_path(environ: Mapping[str, str], name: str) -> Path | None:
     return Path(value)
 
 
+def _env_bool(environ: Mapping[str, str], name: str, *, default: bool) -> bool:
+    value = _optional_env(environ, name)
+    if value is None:
+        return default
+
+    normalized_value = value.casefold()
+    if normalized_value in {"1", "true", "yes", "on"}:
+        return True
+    if normalized_value in {"0", "false", "no", "off"}:
+        return False
+
+    msg = f"{name} must be a boolean value."
+    raise ValueError(msg)
+
+
 def _env_resolution(environ: Mapping[str, str]) -> int:
     value = _optional_env(environ, "CAMERA_MAP_H3_RESOLUTION")
     if value is None:
@@ -70,6 +85,8 @@ class Config(BaseModel):
     s3_object_key: str = "camera-cells.geojson"
     s3_access_key_id: SecretStr | None = None
     s3_secret_access_key: SecretStr | None = None
+    singleton_cell_shift_enabled: bool = True
+    singleton_cell_shift_salt: SecretStr | None = None
 
     @field_validator("s3_object_key")
     @classmethod
@@ -114,6 +131,8 @@ class Config(BaseModel):
             s3_object_key=_optional_env(source, "CAMERA_MAP_S3_OBJECT_KEY") or "camera-cells.geojson",
             s3_access_key_id=_optional_secret(source, "CAMERA_MAP_S3_ACCESS_KEY_ID"),
             s3_secret_access_key=_optional_secret(source, "CAMERA_MAP_S3_SECRET_ACCESS_KEY"),
+            singleton_cell_shift_enabled=_env_bool(source, "CAMERA_MAP_SINGLETON_CELL_SHIFT_ENABLED", default=True),
+            singleton_cell_shift_salt=_optional_secret(source, "CAMERA_MAP_SINGLETON_CELL_SHIFT_SALT"),
         )
 
     def require_upload_settings(self) -> None:

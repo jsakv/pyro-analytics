@@ -49,7 +49,7 @@ def test_build_feature_collection_validates_aggregates() -> None:
     payload = feature_collection.model_dump(mode="json", exclude_none=True)
     assert payload["type"] == "FeatureCollection"
     assert [feature["properties"]["cell"] for feature in payload["features"]] == [
-        "85396817fffffff",
+        "85396803fffffff",
         "85396c5bfffffff",
     ]
 

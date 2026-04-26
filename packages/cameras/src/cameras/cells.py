@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import hashlib
 from collections.abc import Iterable
 
+import h3  # type: ignore[import-untyped]
 import polars as pl
 import polars_h3 as ph3  # type: ignore[import-untyped]
 
@@ -20,6 +22,7 @@ AGGREGATE_SCHEMA = {
     "camera_count": pl.Int64,
     "camera_count_bucket": pl.Utf8,
 }
+DEFAULT_SINGLETON_CELL_SHIFT_SALT = "pyronear-camera-map-singleton-cell-shift"
 
 
 def cameras_to_frame(cameras: Iterable[Camera]) -> pl.DataFrame:
@@ -47,10 +50,12 @@ def aggregate_cells(cameras: Iterable[Camera], config: Config) -> pl.DataFrame:
         return pl.DataFrame(schema={name: AGGREGATE_SCHEMA[name] for name in selected_properties})
 
     indexed = index_cameras(frame, resolution=config.publish_resolution)
+    source_aggregates = indexed.group_by("cell").agg(pl.len().alias("camera_count"))
+    public_aggregates = _shift_singleton_cells(source_aggregates, config)
     aggregates = (
-        indexed
+        public_aggregates
         .group_by("cell")
-        .agg(pl.len().alias("camera_count"))
+        .agg(pl.sum("camera_count").alias("camera_count"))
         .with_columns(_camera_count_bucket_expr())
         .sort("cell")
         .select(*AGGREGATE_SCHEMA)
@@ -59,6 +64,34 @@ def aggregate_cells(cameras: Iterable[Camera], config: Config) -> pl.DataFrame:
     for row in aggregates.iter_rows(named=True):
         CellProperties.model_validate(row)
     return aggregates.select(selected_properties)
+
+
+def _shift_singleton_cells(aggregates: pl.DataFrame, config: Config) -> pl.DataFrame:
+    rows: list[dict[str, str | int]] = []
+    for row in aggregates.iter_rows(named=True):
+        cell = str(row["cell"])
+        camera_count = int(row["camera_count"])
+        public_cell = cell
+        if config.singleton_cell_shift_enabled and camera_count == 1:
+            public_cell = _shifted_singleton_cell(cell, config)
+        rows.append({"cell": public_cell, "camera_count": camera_count})
+
+    return pl.DataFrame(rows, schema={"cell": pl.Utf8, "camera_count": pl.Int64})
+
+
+def _shifted_singleton_cell(cell: str, config: Config) -> str:
+    neighbors = sorted(str(neighbor) for neighbor in h3.grid_disk(cell, 1) if neighbor != cell)
+    if not neighbors:
+        return cell
+
+    salt = (
+        config.singleton_cell_shift_salt.get_secret_value()
+        if config.singleton_cell_shift_salt is not None
+        else DEFAULT_SINGLETON_CELL_SHIFT_SALT
+    )
+    digest = hashlib.sha256(f"{salt}:{cell}".encode()).digest()
+    index = int.from_bytes(digest[:8], "big") % len(neighbors)
+    return neighbors[index]
 
 
 def _camera_count_bucket_expr() -> pl.Expr:

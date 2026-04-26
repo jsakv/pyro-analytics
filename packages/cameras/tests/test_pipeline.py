@@ -71,7 +71,7 @@ def test_publish_fixture_pipeline_with_fake_publisher() -> None:
     payload = json.loads(publisher.artifact)
     assert payload["type"] == "FeatureCollection"
     assert [feature["properties"]["cell"] for feature in payload["features"]] == [
-        "85396817fffffff",
+        "85396803fffffff",
         "85396c5bfffffff",
     ]
 

@@ -9,6 +9,7 @@ import pytest
 from cameras import Camera, Config, LocationPolicy
 from cameras.cells import aggregate_cells, cameras_to_frame, index_cameras
 from cameras.sources import FixtureSource
+from pydantic import SecretStr
 
 FIXTURES_ROOT = Path(__file__).parent / "fixtures"
 
@@ -50,7 +51,7 @@ def test_aggregate_cells_groups_fixture_cameras_deterministically() -> None:
 
     assert aggregates.to_dicts() == [
         {
-            "cell": "85396817fffffff",
+            "cell": "85396803fffffff",
             "camera_count": 1,
             "camera_count_bucket": "1",
         },
@@ -70,10 +71,62 @@ def test_aggregate_cells_uses_config_resolution() -> None:
 
     assert aggregates["camera_count"].to_list() == [1, 1, 1]
     assert aggregates["cell"].to_list() == [
-        "863968157ffffff",
+        "863968147ffffff",
         "86396c587ffffff",
-        "86396c59fffffff",
+        "86396c597ffffff",
     ]
+
+
+def test_aggregate_cells_can_preserve_exact_singleton_cells_when_shift_disabled() -> None:
+    """The singleton shift can be disabled for fixture comparisons."""
+    config = Config(singleton_cell_shift_enabled=False)
+
+    aggregates = aggregate_cells(load_fixture_cameras(), config)
+
+    assert aggregates.to_dicts() == [
+        {
+            "cell": "85396817fffffff",
+            "camera_count": 1,
+            "camera_count_bucket": "1",
+        },
+        {
+            "cell": "85396c5bfffffff",
+            "camera_count": 2,
+            "camera_count_bucket": "2-5",
+        },
+    ]
+
+
+def test_aggregate_cells_shifts_singletons_with_salted_determinism() -> None:
+    """Singleton cells should move to a stable neighboring cell before publication."""
+    config = Config(singleton_cell_shift_salt=SecretStr("alpha"))
+
+    aggregates = aggregate_cells(load_fixture_cameras(), config)
+
+    assert aggregates.to_dicts() == [
+        {
+            "cell": "853968bbfffffff",
+            "camera_count": 1,
+            "camera_count_bucket": "1",
+        },
+        {
+            "cell": "85396c5bfffffff",
+            "camera_count": 2,
+            "camera_count_bucket": "2-5",
+        },
+    ]
+
+
+def test_aggregate_cells_uses_salt_to_select_neighboring_singleton_cell() -> None:
+    """Different salts should choose different public singleton neighbors."""
+    cameras = load_fixture_cameras()
+
+    first = aggregate_cells(cameras, Config(singleton_cell_shift_salt=SecretStr("alpha")))
+    second = aggregate_cells(cameras, Config(singleton_cell_shift_salt=SecretStr("beta")))
+
+    assert first["cell"].to_list()[0] == "853968bbfffffff"
+    assert second["cell"].to_list()[0] == "85396807fffffff"
+    assert first["camera_count"].sum() == second["camera_count"].sum() == 3
 
 
 def test_aggregate_cells_uses_approved_public_properties() -> None:

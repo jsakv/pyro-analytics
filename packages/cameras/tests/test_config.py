@@ -15,6 +15,7 @@ def test_default_config_uses_safe_location_policy() -> None:
     assert config.publish_resolution == 5
     assert config.public_properties == ("cell", "camera_count", "camera_count_bucket")
     assert config.s3_object_key == "camera-cells.geojson"
+    assert config.singleton_cell_shift_enabled is True
 
 
 def test_from_env_loads_api_fixture_policy_and_minio_settings() -> None:
@@ -31,6 +32,8 @@ def test_from_env_loads_api_fixture_policy_and_minio_settings() -> None:
         "CAMERA_MAP_S3_OBJECT_KEY": "camera-cells.geojson",
         "CAMERA_MAP_S3_ACCESS_KEY_ID": "minio-access",
         "CAMERA_MAP_S3_SECRET_ACCESS_KEY": "minio-secret",
+        "CAMERA_MAP_SINGLETON_CELL_SHIFT_ENABLED": "false",
+        "CAMERA_MAP_SINGLETON_CELL_SHIFT_SALT": "fixture-cell-shift",
     })
 
     assert config.api_url == "https://alertapi.pyronear.org"
@@ -42,6 +45,9 @@ def test_from_env_loads_api_fixture_policy_and_minio_settings() -> None:
     assert config.s3_endpoint_url == "http://localhost:9000"
     assert config.s3_region == "us-east-1"
     assert config.s3_bucket == "pyronear-public-map-local"
+    assert config.singleton_cell_shift_enabled is False
+    assert config.singleton_cell_shift_salt is not None
+    assert config.singleton_cell_shift_salt.get_secret_value() == "fixture-cell-shift"
     config.require_upload_settings()
 
 
@@ -55,6 +61,12 @@ def test_non_integer_env_resolution_fails_clearly() -> None:
     """Non-integer env resolution should fail with the env var name."""
     with pytest.raises(ValueError, match="CAMERA_MAP_H3_RESOLUTION"):
         Config.from_env({"CAMERA_MAP_H3_RESOLUTION": "coarse"})
+
+
+def test_invalid_env_singleton_shift_flag_fails_clearly() -> None:
+    """Singleton shift flag should only accept boolean-like values."""
+    with pytest.raises(ValueError, match="CAMERA_MAP_SINGLETON_CELL_SHIFT_ENABLED"):
+        Config.from_env({"CAMERA_MAP_SINGLETON_CELL_SHIFT_ENABLED": "sometimes"})
 
 
 def test_unapproved_public_properties_fail_clearly() -> None:
