@@ -13,7 +13,7 @@ classifiers = [
     "Programming Language :: Python :: 3",
 ]
 dependencies = [
-    "pyronear-station",
+    "pyronear-cameras",
     "typer",
 ]
 
@@ -33,7 +33,7 @@ dev = [
 members = ["packages/*"]
 
 [tool.uv.sources]
-pyronear-station = { workspace = true }
+pyronear-cameras = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]
@@ -44,7 +44,7 @@ packages = ["src/analytics"]
 
 [tool.mypy]
 python_version = "3.14"
-files = ["src/analytics", "packages/station/src/station", "packages/station/tests", "tests"]
+files = ["src/analytics", "packages/cameras/src/cameras", "packages/cameras/tests", "tests"]
 disallow_untyped_defs = true
 disallow_any_unimported = true
 no_implicit_optional = true

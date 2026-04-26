@@ -7,14 +7,14 @@ import re
 from pathlib import Path
 
 import pytest
-from station import Result
+from cameras import Result
 from typer.testing import CliRunner
 
 import analytics
 import analytics.cli
 from analytics.cli import app
 
-FIXTURES_ROOT = Path(__file__).parents[2] / "packages" / "station" / "tests" / "fixtures"
+FIXTURES_ROOT = Path(__file__).parents[2] / "packages" / "cameras" / "tests" / "fixtures"
 ANSI_PATTERN = re.compile(r"\x1b\[[0-9;]*m")
 
 
@@ -36,9 +36,9 @@ def test_cli_help() -> None:
     assert "Pyronear Analytics command line tools." in result.output
 
 
-def test_station_publish_help() -> None:
-    """The station publish command should expose source and local output options."""
-    result = CliRunner().invoke(app, ["station", "publish", "--help"])
+def test_camera_publish_help() -> None:
+    """The camera publish command should expose source and local output options."""
+    result = CliRunner().invoke(app, ["cameras", "publish", "--help"])
     output = plain_output(result.output)
 
     assert result.exit_code == 0
@@ -47,14 +47,14 @@ def test_station_publish_help() -> None:
     assert "--output" in output
 
 
-def test_station_publish_fixture_writes_local_artifact(tmp_path: Path) -> None:
+def test_camera_publish_fixture_writes_local_artifact(tmp_path: Path) -> None:
     """Fixture source should publish locally without live services."""
-    output_path = tmp_path / "station-cells.geojson"
+    output_path = tmp_path / "camera-cells.geojson"
 
     result = CliRunner().invoke(
         app,
         [
-            "station",
+            "cameras",
             "publish",
             "--source",
             "fixture",
@@ -73,45 +73,45 @@ def test_station_publish_fixture_writes_local_artifact(tmp_path: Path) -> None:
     assert payload["type"] == "FeatureCollection"
 
 
-def test_station_publish_delegates_to_station_publish(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
-    """The CLI should delegate domain work to the station package."""
+def test_camera_publish_delegates_to_camera_publish(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    """The CLI should delegate domain work to the camera package."""
     calls: list[tuple[object, object]] = []
 
     def fake_publish(config: object, *, publisher: object | None = None) -> Result:
         calls.append((config, publisher))
-        return Result(station_count=7, cell_count=4, artifact_key="station-cells.geojson", published=True)
+        return Result(camera_count=7, cell_count=4, artifact_key="camera-cells.geojson", published=True)
 
-    monkeypatch.setattr(analytics.cli, "publish_station", fake_publish)
+    monkeypatch.setattr(analytics.cli, "publish_camera", fake_publish)
 
     result = CliRunner().invoke(
         app,
         [
-            "station",
+            "cameras",
             "publish",
             "--source",
             "fixture",
             "--fixture-path",
             str(FIXTURES_ROOT / "api-cameras.json"),
             "--output",
-            str(tmp_path / "station-cells.geojson"),
+            str(tmp_path / "camera-cells.geojson"),
         ],
     )
 
     assert result.exit_code == 0
     assert calls
-    assert "fetched=7 published=4 uploaded=1 artifact=station-cells.geojson" in result.output
+    assert "fetched=7 published=4 uploaded=1 artifact=camera-cells.geojson" in result.output
 
 
-def test_station_publish_fixture_requires_path() -> None:
+def test_camera_publish_fixture_requires_path() -> None:
     """Fixture source should fail clearly without a fixture path."""
-    result = CliRunner().invoke(app, ["station", "publish", "--source", "fixture"])
+    result = CliRunner().invoke(app, ["cameras", "publish", "--source", "fixture"])
     output = plain_output(result.output)
 
     assert result.exit_code == 2
     assert "--fixture-path" in output
 
 
-def test_station_publish_maps_domain_failure_to_exit(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_camera_publish_maps_domain_failure_to_exit(monkeypatch: pytest.MonkeyPatch) -> None:
     """Domain failures should become non-zero exits without private source output."""
 
     def fake_publish(config: object, *, publisher: object | None = None) -> Result:
@@ -119,9 +119,9 @@ def test_station_publish_maps_domain_failure_to_exit(monkeypatch: pytest.MonkeyP
         msg = "publish failed"
         raise ValueError(msg)
 
-    monkeypatch.setattr(analytics.cli, "publish_station", fake_publish)
+    monkeypatch.setattr(analytics.cli, "publish_camera", fake_publish)
 
-    result = CliRunner().invoke(app, ["station", "publish"])
+    result = CliRunner().invoke(app, ["cameras", "publish"])
 
     assert result.exit_code == 1
     assert "publish failed" in result.output

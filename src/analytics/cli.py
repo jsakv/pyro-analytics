@@ -7,23 +7,23 @@ from pathlib import Path
 from typing import Annotated
 
 import typer
-from station import Config
-from station import publish as publish_station
-from station.publishers import LocalPublisher
+from cameras import Config
+from cameras import publish as publish_camera
+from cameras.publishers import LocalPublisher
 
 app = typer.Typer(
     help="Pyronear Analytics command line tools.",
     no_args_is_help=True,
 )
-station_app = typer.Typer(
-    help="Station map publisher commands.",
+cameras_app = typer.Typer(
+    help="Camera map publisher commands.",
     no_args_is_help=True,
 )
-app.add_typer(station_app, name="station")
+app.add_typer(cameras_app, name="cameras")
 
 
 class SourceChoice(str, Enum):
-    """Station source choices exposed by the CLI."""
+    """Cameras source choices exposed by the CLI."""
 
     api = "api"
     fixture = "fixture"
@@ -34,10 +34,10 @@ def main() -> None:
     """Pyronear Analytics command line tools."""
 
 
-@station_app.command("publish")
-def station_publish(
+@cameras_app.command("publish")
+def camera_publish(
     source: Annotated[
-        SourceChoice, typer.Option("--source", help="Station source to publish from.")
+        SourceChoice, typer.Option("--source", help="Camera source to publish from.")
     ] = SourceChoice.api,
     fixture_path: Annotated[
         Path | None,
@@ -48,7 +48,7 @@ def station_publish(
         typer.Option("--output", help="Write artifact locally instead of uploading to S3."),
     ] = None,
 ) -> None:
-    """Publish the station map artifact."""
+    """Publish the camera map artifact."""
     config = Config.from_env()
     if source is SourceChoice.fixture:
         if fixture_path is None:
@@ -60,7 +60,7 @@ def station_publish(
 
     publisher = LocalPublisher(output) if output is not None else None
     try:
-        result = publish_station(config, publisher=publisher)
+        result = publish_camera(config, publisher=publisher)
     except (TypeError, ValueError) as exc:
         typer.echo(str(exc), err=True)
         raise typer.Exit(code=1) from exc
@@ -68,7 +68,7 @@ def station_publish(
     uploaded_count = 1 if result.published else 0
     typer.echo(
         " ".join([
-            f"fetched={result.station_count}",
+            f"fetched={result.camera_count}",
             f"published={result.cell_count}",
             f"uploaded={uploaded_count}",
             f"artifact={result.artifact_key}",

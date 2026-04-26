@@ -5,7 +5,7 @@ requires-python = "==3.14.*"
 [manifest]
 members = [
     "pyro-analytics",
-    "pyronear-station",
+    "pyronear-cameras",
 ]
 
 [[package]]
@@ -553,7 +553,7 @@ name = "pyro-analytics"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
-    { name = "pyronear-station" },
+    { name = "pyronear-cameras" },
     { name = "typer" },
 ]
 
@@ -568,7 +568,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "pyronear-station", editable = "packages/station" },
+    { name = "pyronear-cameras", editable = "packages/cameras" },
     { name = "typer" },
 ]
 
@@ -582,9 +582,9 @@ dev = [
 ]
 
 [[package]]
-name = "pyronear-station"
+name = "pyronear-cameras"
 version = "0.1.0"
-source = { editable = "packages/station" }
+source = { editable = "packages/cameras" }
 dependencies = [
     { name = "boto3" },
     { name = "geojson-pydantic" },
