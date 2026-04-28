@@ -7,9 +7,9 @@ from pathlib import Path
 
 import pytest
 from botocore.exceptions import ClientError  # type: ignore[import-untyped]
-from cameras import Config, Result
-from cameras.publishers import GEOJSON_CONTENT_TYPE, LocalPublisher, Publisher, S3Publisher
 from pydantic import SecretStr
+from pyromap import Config, Result
+from pyromap.publishers import GEOJSON_CONTENT_TYPE, LocalPublisher, Publisher, S3Publisher
 
 
 def secret(value: str) -> SecretStr:
