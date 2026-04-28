@@ -9,9 +9,9 @@ import boto3  # type: ignore[import-untyped]
 from botocore.exceptions import BotoCoreError, ClientError  # type: ignore[import-untyped]
 from pydantic import SecretStr
 
-from cameras.config import Config
-from cameras.publishers.base import GEOJSON_CONTENT_TYPE
-from cameras.schemas import Result
+from pyromap.config import Config
+from pyromap.publishers.base import GEOJSON_CONTENT_TYPE
+from pyromap.schemas import Result
 
 
 class S3Client(Protocol):
@@ -19,6 +19,42 @@ class S3Client(Protocol):
 
     def put_object(self, **kwargs: Any) -> Mapping[str, Any]:
         """Upload one object."""
+
+
+def _required(value: str | None, env_name: str) -> str:
+    if value is None:
+        msg = f"Missing required upload setting: {env_name}."
+        raise ValueError(msg)
+    return value
+
+
+def _required_secret(value: SecretStr | None, env_name: str) -> str:
+    if value is None:
+        msg = f"Missing required upload setting: {env_name}."
+        raise ValueError(msg)
+    return value.get_secret_value()
+
+
+def _response_etag(response: Mapping[str, Any]) -> str | None:
+    etag = response.get("ETag")
+    if etag is None:
+        return None
+    return str(etag)
+
+
+def _build_client(config: Config) -> S3Client:
+    access_key = _required_secret(config.s3_access_key_id, "CAMERA_MAP_S3_ACCESS_KEY_ID")
+    secret_key = _required_secret(config.s3_secret_access_key, "CAMERA_MAP_S3_SECRET_ACCESS_KEY")
+    return cast(
+        S3Client,
+        boto3.client(
+            "s3",
+            endpoint_url=_required(config.s3_endpoint_url, "CAMERA_MAP_S3_ENDPOINT_URL"),
+            region_name=_required(config.s3_region, "CAMERA_MAP_S3_REGION"),
+            aws_access_key_id=access_key,
+            aws_secret_access_key=secret_key,
+        ),
+    )
 
 
 class S3Publisher:
@@ -60,39 +96,3 @@ class S3Publisher:
             endpoint_url=self.endpoint_url,
             etag=_response_etag(response),
         )
-
-
-def _build_client(config: Config) -> S3Client:
-    access_key = _required_secret(config.s3_access_key_id, "CAMERA_MAP_S3_ACCESS_KEY_ID")
-    secret_key = _required_secret(config.s3_secret_access_key, "CAMERA_MAP_S3_SECRET_ACCESS_KEY")
-    return cast(
-        S3Client,
-        boto3.client(
-            "s3",
-            endpoint_url=_required(config.s3_endpoint_url, "CAMERA_MAP_S3_ENDPOINT_URL"),
-            region_name=_required(config.s3_region, "CAMERA_MAP_S3_REGION"),
-            aws_access_key_id=access_key,
-            aws_secret_access_key=secret_key,
-        ),
-    )
-
-
-def _required(value: str | None, env_name: str) -> str:
-    if value is None:
-        msg = f"Missing required upload setting: {env_name}."
-        raise ValueError(msg)
-    return value
-
-
-def _required_secret(value: SecretStr | None, env_name: str) -> str:
-    if value is None:
-        msg = f"Missing required upload setting: {env_name}."
-        raise ValueError(msg)
-    return value.get_secret_value()
-
-
-def _response_etag(response: Mapping[str, Any]) -> str | None:
-    etag = response.get("ETag")
-    if etag is None:
-        return None
-    return str(etag)

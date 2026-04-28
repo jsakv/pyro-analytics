@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Protocol
 
-from cameras.schemas import Result
+from pyromap.schemas import Result
 
 GEOJSON_CONTENT_TYPE = "application/geo+json"
 
