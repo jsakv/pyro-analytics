@@ -1,4 +1,4 @@
-"""Import smoke tests for the PyroMap package."""
+"""Import smoke tests for the Pyromap package."""
 
 from __future__ import annotations
 
@@ -8,12 +8,12 @@ import pyromap
 
 
 def test_pyromap_package_imports() -> None:
-    """The PyroMap package should expose a minimal public API."""
+    """The Pyromap package should expose a minimal public API."""
     assert pyromap.__version__ == "0.1.0"
 
 
 def test_pyromap_modules_import_without_analytics() -> None:
-    """PyroMap modules should import without depending on CLI wiring."""
+    """Pyromap modules should import without depending on CLI wiring."""
     module_names = [
         "pyromap.config",
         "pyromap.cells",

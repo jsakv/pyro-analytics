@@ -48,7 +48,7 @@ def fixture_cameras() -> tuple[Camera, ...]:
 
 
 def test_publish_export_is_available() -> None:
-    """The PyroMap package should expose the publication entrypoint."""
+    """The Pyromap package should expose the publication entrypoint."""
     assert callable(publish)
 
 

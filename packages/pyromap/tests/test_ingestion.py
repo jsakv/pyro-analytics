@@ -47,5 +47,5 @@ def test_run_cameras_ingestion_runs_backend_source_resource(monkeypatch: pytest.
 
 
 def test_ingestion_module_does_not_expose_camera_schema() -> None:
-    """Camera validation belongs to the PyroMap reader boundary."""
+    """Camera validation belongs to the Pyromap reader boundary."""
     assert "Camera" not in vars(ingestion)

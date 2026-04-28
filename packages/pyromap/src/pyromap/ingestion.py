@@ -1,4 +1,4 @@
-"""dlt ingestion entrypoints for PyroMap camera data."""
+"""dlt ingestion entrypoints for Pyromap camera data."""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ CAMERAS_TABLE = "cameras"
 
 
 def build_pipeline(config: Config) -> Any:
-    """Build the dlt ingestion pipeline for PyroMap camera records."""
+    """Build the dlt ingestion pipeline for Pyromap camera records."""
     return dlt.pipeline(
         pipeline_name=config.ingestion_pipeline_name,
         pipelines_dir=str(config.ingestion_pipelines_dir),

@@ -23,7 +23,7 @@ app.add_typer(pyromap_app, name="pyromap")
 
 
 class SourceChoice(StrEnum):
-    """PyroMap source choices exposed by the CLI."""
+    """Pyromap source choices exposed by the CLI."""
 
     api = "api"
     fixture = "fixture"

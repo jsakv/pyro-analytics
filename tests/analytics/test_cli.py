@@ -74,7 +74,7 @@ def test_camera_publish_fixture_writes_local_artifact(tmp_path: Path) -> None:
 
 
 def test_pyromap_publish_delegates_to_pyromap_publish(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
-    """The CLI should delegate domain work to the PyroMap package."""
+    """The CLI should delegate domain work to the Pyromap package."""
     calls: list[tuple[object, object]] = []
 
     def fake_publish(config: object, *, publisher: object | None = None) -> Result:
