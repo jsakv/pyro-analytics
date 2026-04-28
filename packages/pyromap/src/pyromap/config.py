@@ -8,7 +8,7 @@ from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict, Field, SecretStr, field_validator
 
-from cameras.privacy import DEFAULT_LOCATION_POLICY, LocationPolicy
+from pyromap.privacy import DEFAULT_LOCATION_POLICY, LocationPolicy
 
 
 def _optional_env(environ: Mapping[str, str], name: str) -> str | None:
@@ -75,9 +75,11 @@ class Config(BaseModel):
 
     model_config = ConfigDict(frozen=True)
 
-    api_url: str | None = None
-    api_token: SecretStr | None = None
     fixture_path: Path | None = None
+    ingestion_pipeline_name: str = "pyromap"
+    ingestion_dataset_name: str = "pyromap_data"
+    ingestion_destination: str = "duckdb"
+    ingestion_pipelines_dir: Path = Path(".dlt/pipelines")
     location_policy: LocationPolicy = Field(default_factory=lambda: DEFAULT_LOCATION_POLICY)
     s3_endpoint_url: str | None = None
     s3_region: str | None = None
@@ -121,9 +123,11 @@ class Config(BaseModel):
         )
 
         return cls(
-            api_url=_optional_env(source, "PYRONEAR_API_URL"),
-            api_token=_optional_secret(source, "PYRONEAR_API_TOKEN"),
             fixture_path=_optional_path(source, "CAMERA_MAP_FIXTURE_PATH"),
+            ingestion_pipeline_name=_optional_env(source, "PYROMAP_DLT_PIPELINE_NAME") or "pyromap",
+            ingestion_dataset_name=_optional_env(source, "PYROMAP_DLT_DATASET_NAME") or "pyromap_data",
+            ingestion_destination=_optional_env(source, "PYROMAP_DLT_DESTINATION") or "duckdb",
+            ingestion_pipelines_dir=_optional_path(source, "PYROMAP_DLT_PIPELINES_DIR") or Path(".dlt/pipelines"),
             location_policy=location_policy,
             s3_endpoint_url=_optional_env(source, "CAMERA_MAP_S3_ENDPOINT_URL"),
             s3_region=_optional_env(source, "CAMERA_MAP_S3_REGION"),
