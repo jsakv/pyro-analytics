@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-
 import tomllib
+from pathlib import Path
 
 
 def test_root_is_uv_workspace() -> None:
@@ -13,5 +12,10 @@ def test_root_is_uv_workspace() -> None:
     config = tomllib.loads((root / "pyproject.toml").read_text())
 
     assert config["project"]["scripts"]["analytics"] == "analytics.cli:app"
+    assert config["project"]["dependencies"] == ["sources", "pyromap", "typer"]
     assert config["tool"]["uv"]["workspace"]["members"] == ["packages/*"]
+    assert config["tool"]["uv"]["sources"] == {
+        "sources": {"workspace": True},
+        "pyromap": {"workspace": True},
+    }
     assert config["tool"]["hatch"]["build"]["targets"]["wheel"]["packages"] == ["src/analytics"]

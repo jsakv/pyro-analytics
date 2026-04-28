@@ -2,28 +2,28 @@
 
 from __future__ import annotations
 
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
 from typing import Annotated
 
 import typer
-from cameras import Config
-from cameras import publish as publish_camera
-from cameras.publishers import LocalPublisher
+from pyromap import Config
+from pyromap import publish as publish_pyromap
+from pyromap.publishers import LocalPublisher
 
 app = typer.Typer(
     help="Pyronear Analytics command line tools.",
     no_args_is_help=True,
 )
-cameras_app = typer.Typer(
+pyromap_app = typer.Typer(
     help="Camera map publisher commands.",
     no_args_is_help=True,
 )
-app.add_typer(cameras_app, name="cameras")
+app.add_typer(pyromap_app, name="pyromap")
 
 
-class SourceChoice(str, Enum):
-    """Cameras source choices exposed by the CLI."""
+class SourceChoice(StrEnum):
+    """PyroMap source choices exposed by the CLI."""
 
     api = "api"
     fixture = "fixture"
@@ -34,8 +34,8 @@ def main() -> None:
     """Pyronear Analytics command line tools."""
 
 
-@cameras_app.command("publish")
-def camera_publish(
+@pyromap_app.command("publish")
+def pyromap_publish(
     source: Annotated[SourceChoice, typer.Option("--source", help="Camera source to publish from.")] = SourceChoice.api,
     fixture_path: Annotated[
         Path | None,
@@ -58,7 +58,7 @@ def camera_publish(
 
     publisher = LocalPublisher(output) if output is not None else None
     try:
-        result = publish_camera(config, publisher=publisher)
+        result = publish_pyromap(config, publisher=publisher)
     except (TypeError, ValueError) as exc:
         typer.echo(str(exc), err=True)
         raise typer.Exit(code=1) from exc

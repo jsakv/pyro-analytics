@@ -6,9 +6,9 @@ import json
 from pathlib import Path
 from typing import Any
 
-from cameras import Config
-from cameras.cells import aggregate_cells
-from cameras.schemas import Camera
+from pyromap import Config
+from pyromap.cells import aggregate_cells
+from pyromap.schemas import Camera
 
 ROOT = Path(__file__).resolve().parents[2]
 DEMO_SOURCE = ROOT / "examples" / "cameras" / "demo-api-cameras.json"
@@ -22,12 +22,12 @@ def load_json(path: Path) -> Any:
 
 def test_demo_source_contains_multi_camera_cells_up_to_four() -> None:
     """Demo source data should exercise map density buckets."""
-    cameras = [Camera.model_validate(record) for record in load_json(DEMO_SOURCE)]
+    pyromap = [Camera.model_validate(record) for record in load_json(DEMO_SOURCE)]
 
-    aggregates = aggregate_cells(cameras, Config())
+    aggregates = aggregate_cells(pyromap, Config())
     counts = sorted(aggregates["camera_count"].to_list(), reverse=True)
 
-    assert len(cameras) == 66
+    assert len(pyromap) == 66
     assert counts[:3] == [4, 3, 2]
     assert max(counts) == 4
 

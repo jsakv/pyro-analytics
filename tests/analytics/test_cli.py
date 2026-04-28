@@ -7,14 +7,14 @@ import re
 from pathlib import Path
 
 import pytest
-from cameras import Result
+from pyromap import Result
 from typer.testing import CliRunner
 
 import analytics
 import analytics.cli
 from analytics.cli import app
 
-FIXTURES_ROOT = Path(__file__).parents[2] / "packages" / "cameras" / "tests" / "fixtures"
+FIXTURES_ROOT = Path(__file__).parents[2] / "packages" / "pyromap" / "tests" / "fixtures"
 ANSI_PATTERN = re.compile(r"\x1b\[[0-9;]*m")
 
 
@@ -38,7 +38,7 @@ def test_cli_help() -> None:
 
 def test_camera_publish_help() -> None:
     """The camera publish command should expose source and local output options."""
-    result = CliRunner().invoke(app, ["cameras", "publish", "--help"])
+    result = CliRunner().invoke(app, ["pyromap", "publish", "--help"])
     output = plain_output(result.output)
 
     assert result.exit_code == 0
@@ -54,7 +54,7 @@ def test_camera_publish_fixture_writes_local_artifact(tmp_path: Path) -> None:
     result = CliRunner().invoke(
         app,
         [
-            "cameras",
+            "pyromap",
             "publish",
             "--source",
             "fixture",
@@ -73,20 +73,20 @@ def test_camera_publish_fixture_writes_local_artifact(tmp_path: Path) -> None:
     assert payload["type"] == "FeatureCollection"
 
 
-def test_camera_publish_delegates_to_camera_publish(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
-    """The CLI should delegate domain work to the camera package."""
+def test_pyromap_publish_delegates_to_pyromap_publish(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    """The CLI should delegate domain work to the PyroMap package."""
     calls: list[tuple[object, object]] = []
 
     def fake_publish(config: object, *, publisher: object | None = None) -> Result:
         calls.append((config, publisher))
         return Result(camera_count=7, cell_count=4, artifact_key="camera-cells.geojson", published=True)
 
-    monkeypatch.setattr(analytics.cli, "publish_camera", fake_publish)
+    monkeypatch.setattr(analytics.cli, "publish_pyromap", fake_publish)
 
     result = CliRunner().invoke(
         app,
         [
-            "cameras",
+            "pyromap",
             "publish",
             "--source",
             "fixture",
@@ -104,7 +104,7 @@ def test_camera_publish_delegates_to_camera_publish(monkeypatch: pytest.MonkeyPa
 
 def test_camera_publish_fixture_requires_path() -> None:
     """Fixture source should fail clearly without a fixture path."""
-    result = CliRunner().invoke(app, ["cameras", "publish", "--source", "fixture"])
+    result = CliRunner().invoke(app, ["pyromap", "publish", "--source", "fixture"])
     output = plain_output(result.output)
 
     assert result.exit_code == 2
@@ -119,9 +119,9 @@ def test_camera_publish_maps_domain_failure_to_exit(monkeypatch: pytest.MonkeyPa
         msg = "publish failed"
         raise ValueError(msg)
 
-    monkeypatch.setattr(analytics.cli, "publish_camera", fake_publish)
+    monkeypatch.setattr(analytics.cli, "publish_pyromap", fake_publish)
 
-    result = CliRunner().invoke(app, ["cameras", "publish"])
+    result = CliRunner().invoke(app, ["pyromap", "publish"])
 
     assert result.exit_code == 1
     assert "publish failed" in result.output
