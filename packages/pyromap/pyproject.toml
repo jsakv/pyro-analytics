@@ -1,24 +1,28 @@
 [project]
-name = "pyronear-cameras"
+name = "pyromap"
 version = "0.1.0"
 description = "Reusable camera map publisher library for Pyronear Analytics."
-readme = "README.md"
-requires-python = ">=3.14,<3.15"
+readme = "../../README.md"
+requires-python = ">=3.12,<3.14"
 authors = [{ name = "Pyronear <contact@pyronear.org>", email = "contact@pyronear.org" }]
 dependencies = [
     "boto3",
+    "dlt[duckdb]>=1.25.0",
     "geojson-pydantic",
     "h3",
-    "httpx",
     "orjson",
     "polars",
     "polars-h3",
     "pydantic",
+    "sources",
 ]
+
+[tool.uv.sources]
+sources = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/cameras"]
+packages = ["src/pyromap"]

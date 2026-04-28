@@ -3,7 +3,7 @@ name = "pyro-analytics"
 version = "0.1.0"
 description = "Pyronear Analytics workspace for wildfire data analysis tooling."
 readme = "README.md"
-requires-python = ">=3.14,<3.15"
+requires-python = ">=3.12,<3.14"
 authors = [{ name = "Pyronear <contact@pyronear.org>", email = "contact@pyronear.org" }]
 keywords = ["python", "uv", "workspace"]
 classifiers = [
@@ -13,7 +13,8 @@ classifiers = [
     "Programming Language :: Python :: 3",
 ]
 dependencies = [
-    "pyronear-cameras",
+    "sources",
+    "pyromap",
     "typer",
 ]
 
@@ -33,7 +34,8 @@ dev = [
 members = ["packages/*"]
 
 [tool.uv.sources]
-pyronear-cameras = { workspace = true }
+sources = { workspace = true }
+pyromap = { workspace = true }
 
 [build-system]
 requires = ["hatchling"]
@@ -43,8 +45,15 @@ build-backend = "hatchling.build"
 packages = ["src/analytics"]
 
 [tool.mypy]
-python_version = "3.14"
-files = ["src/analytics", "packages/cameras/src/cameras", "packages/cameras/tests", "tests"]
+python_version = "3.12"
+files = [
+    "src/analytics",
+    "packages/sources/src/sources",
+    "packages/sources/tests",
+    "packages/pyromap/src/pyromap",
+    "packages/pyromap/tests",
+    "tests",
+]
 disallow_untyped_defs = true
 disallow_any_unimported = true
 no_implicit_optional = true
@@ -58,8 +67,7 @@ addopts = ["--import-mode=importlib"]
 testpaths = ["tests", "packages"]
 
 [tool.ruff]
-# Keep py39 to mirror shared lint rule intent from pyproject 2 defaults.
-target-version = "py39"
+target-version = "py312"
 line-length = 120
 fix = true
 
@@ -99,4 +107,4 @@ skip_empty = true
 
 [tool.coverage.run]
 branch = true
-source = ["analytics", "packages"]
+source = ["analytics", "sources", "pyromap"]

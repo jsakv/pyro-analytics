@@ -8,3 +8,8 @@ __pycache__/
 .coverage
 htmlcov/
 .venv/
+.dlt/secrets.toml
+.dlt/*.secrets.toml
+.dlt/pipelines/
+*.duckdb
+*.duckdb.wal

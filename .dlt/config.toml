@@ -1,0 +1,2 @@
+[sources.backend]
+pyronear_api_base_url = "https://alertapi.pyronear.org/api/v1/"
