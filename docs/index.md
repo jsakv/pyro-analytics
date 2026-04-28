@@ -4,7 +4,7 @@
 
 `pyro-analytics` is a uv workspace root. The root `src/analytics` package owns the Typer CLI, shared tooling lives at the root, and domain packages belong under `packages/*`.
 
-## Source and PyroMap packages
+## Source and Pyromap packages
 
 `packages/sources` owns reusable dlt source definitions. `packages/pyromap` runs dlt ingestion and owns the camera map transformation/publication code outside dlt. Both must remain independent from root CLI wiring in `analytics`.
 
@@ -31,7 +31,7 @@ The command prints only summary counts and artifact metadata. It must not print 
 
 For the full manual workflow, environment variables, MinIO notes, object key policy, and privacy review checklist, see [Camera Publisher Runbook](camera-publisher-runbook.md).
 
-For source and public artifact contracts, see [PyroMap API Contract](pyromap-api-contract.md) and [PyroMap Artifact Contract](pyromap-artifact-contract.md).
+For source and public artifact contracts, see [Pyromap API Contract](pyromap-api-contract.md) and [Pyromap Artifact Contract](pyromap-artifact-contract.md).
 
 ## Local docs workflow
 

@@ -53,7 +53,7 @@ uv run analytics --help
 - `src/analytics/`: repository CLI package and Typer app entrypoint
 - `packages/`: workspace packages, added as `packages/*`
 - `packages/sources/`: reusable dlt source definitions for backend ingestion
-- `packages/pyromap/`: PyroMap ingestion execution, transformation, and publication code
+- `packages/pyromap/`: Pyromap ingestion execution, transformation, and publication code
 - `tests/`: root CLI and workspace configuration tests
 - `pyproject.toml`: lint/type/test/coverage configuration
 

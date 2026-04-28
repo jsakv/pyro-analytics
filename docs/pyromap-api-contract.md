@@ -6,7 +6,7 @@ The backend dlt source follows the current Pyronear Alert API camera read contra
 - Bearer token is configured in `.dlt/secrets.toml`.
 - Camera records are fetched with `GET /api/v1/cameras/`.
 - The endpoint returns a JSON array of `CameraRead` records.
-- PyroMap validates ingested records as `pyromap.Camera` before transformation.
+- Pyromap validates ingested records as `pyromap.Camera` before transformation.
 
 The source does not call `GET /api/v1/login/validate` before fetching cameras. It lets the cameras endpoint return the authoritative HTTP status so tests and future CLI output can report a single failure point.
 
