@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-from cameras import Config, LocationPolicy
+from pyromap import Config, LocationPolicy
 
 
 def test_default_config_uses_safe_location_policy() -> None:
@@ -16,14 +16,20 @@ def test_default_config_uses_safe_location_policy() -> None:
     assert config.public_properties == ("cell", "camera_count", "camera_count_bucket")
     assert config.s3_object_key == "camera-cells.geojson"
     assert config.singleton_cell_shift_enabled is True
+    assert config.ingestion_pipeline_name == "pyromap"
+    assert config.ingestion_dataset_name == "pyromap_data"
+    assert config.ingestion_destination == "duckdb"
+    assert config.ingestion_pipelines_dir == Path(".dlt/pipelines")
 
 
 def test_from_env_loads_api_fixture_policy_and_minio_settings() -> None:
     """Environment loading should cover API, fixture, privacy, and S3 settings."""
     config = Config.from_env({
-        "PYRONEAR_API_URL": "https://alertapi.pyronear.org",
-        "PYRONEAR_API_TOKEN": "synthetic-token",
-        "CAMERA_MAP_FIXTURE_PATH": "packages/cameras/tests/fixtures/api-cameras.json",
+        "CAMERA_MAP_FIXTURE_PATH": "packages/pyromap/tests/fixtures/api-cameras.json",
+        "PYROMAP_DLT_PIPELINE_NAME": "pyromap-local",
+        "PYROMAP_DLT_DATASET_NAME": "pyromap_local_data",
+        "PYROMAP_DLT_DESTINATION": "duckdb",
+        "PYROMAP_DLT_PIPELINES_DIR": ".dlt/test-pipelines",
         "CAMERA_MAP_H3_RESOLUTION": "5",
         "CAMERA_MAP_PUBLIC_PROPERTIES": "cell, camera_count, camera_count_bucket",
         "CAMERA_MAP_S3_ENDPOINT_URL": "http://localhost:9000",
@@ -36,10 +42,11 @@ def test_from_env_loads_api_fixture_policy_and_minio_settings() -> None:
         "CAMERA_MAP_SINGLETON_CELL_SHIFT_SALT": "fixture-cell-shift",
     })
 
-    assert config.api_url == "https://alertapi.pyronear.org"
-    assert config.api_token is not None
-    assert config.api_token.get_secret_value() == "synthetic-token"
-    assert config.fixture_path == Path("packages/cameras/tests/fixtures/api-cameras.json")
+    assert config.fixture_path == Path("packages/pyromap/tests/fixtures/api-cameras.json")
+    assert config.ingestion_pipeline_name == "pyromap-local"
+    assert config.ingestion_dataset_name == "pyromap_local_data"
+    assert config.ingestion_destination == "duckdb"
+    assert config.ingestion_pipelines_dir == Path(".dlt/test-pipelines")
     assert config.publish_resolution == 5
     assert config.public_properties == ("cell", "camera_count", "camera_count_bucket")
     assert config.s3_endpoint_url == "http://localhost:9000"

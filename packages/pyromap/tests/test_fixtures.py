@@ -16,11 +16,11 @@ def load_json_fixture(name: str) -> Any:
 
 def test_api_cameras_fixture_matches_camera_read_shape() -> None:
     """Source fixture should mimic the API boundary without credentials."""
-    cameras = load_json_fixture("api-cameras.json")
+    pyromap = load_json_fixture("api-cameras.json")
 
-    assert isinstance(cameras, list)
-    assert cameras
-    for camera in cameras:
+    assert isinstance(pyromap, list)
+    assert pyromap
+    for camera in pyromap:
         assert set(camera) == {
             "angle_of_view",
             "created_at",

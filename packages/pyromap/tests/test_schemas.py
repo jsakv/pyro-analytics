@@ -6,8 +6,8 @@ import json
 from pathlib import Path
 
 import pytest
-from cameras import Camera, CellProperties, Result
 from pydantic import ValidationError
+from pyromap import Camera, CellProperties, Result
 
 FIXTURES_ROOT = Path(__file__).parent / "fixtures"
 
@@ -21,13 +21,13 @@ def load_api_cameras() -> list[dict[str, object]]:
 
 def test_camera_schema_accepts_source_fixture_records() -> None:
     """Synthetic API records should normalize into typed source cameras."""
-    cameras = [Camera.model_validate(record) for record in load_api_cameras()]
+    pyromap = [Camera.model_validate(record) for record in load_api_cameras()]
 
-    assert len(cameras) == 3
-    assert cameras[0].id == 1001
-    assert cameras[0].lat == 43.6122
-    assert cameras[0].lon == 3.8849
-    assert cameras[0].poses[0].camera_id == 1001
+    assert len(pyromap) == 3
+    assert pyromap[0].id == 1001
+    assert pyromap[0].lat == 43.6122
+    assert pyromap[0].lon == 3.8849
+    assert pyromap[0].poses[0].camera_id == 1001
 
 
 def test_camera_requires_coordinates() -> None:

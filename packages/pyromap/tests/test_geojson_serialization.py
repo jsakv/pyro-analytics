@@ -8,20 +8,19 @@ from pathlib import Path
 import h3  # type: ignore[import-untyped]
 import polars as pl
 import pytest
-from cameras import Camera, Config
-from cameras.cells import aggregate_cells
-from cameras.geojson import build_feature_collection, cell_boundary
-from cameras.serialization import serialize_aggregates, serialize_feature_collection
-from cameras.sources import FixtureSource
 from geojson_pydantic import FeatureCollection
 from pydantic import ValidationError
+from pyromap import Camera, Config
+from pyromap.cells import aggregate_cells
+from pyromap.geojson import build_feature_collection, cell_boundary, serialize_aggregates, serialize_feature_collection
+from pyromap.records import load_fixture_records
 
 FIXTURES_ROOT = Path(__file__).parent / "fixtures"
 
 
-def load_fixture_cameras() -> list[Camera]:
+def load_fixture_cameras() -> tuple[Camera, ...]:
     """Load typed synthetic cameras from the fixture source."""
-    return FixtureSource(FIXTURES_ROOT / "api-cameras.json").fetch()
+    return load_fixture_records(FIXTURES_ROOT / "api-cameras.json", model=Camera)
 
 
 def load_aggregates() -> pl.DataFrame:

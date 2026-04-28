@@ -6,17 +6,17 @@ from pathlib import Path
 
 import polars as pl
 import pytest
-from cameras import Camera, Config, LocationPolicy
-from cameras.cells import aggregate_cells, cameras_to_frame, index_cameras
-from cameras.sources import FixtureSource
 from pydantic import SecretStr
+from pyromap import Camera, Config, LocationPolicy
+from pyromap.cells import aggregate_cells, cameras_to_frame, index_cameras
+from pyromap.records import load_fixture_records
 
 FIXTURES_ROOT = Path(__file__).parent / "fixtures"
 
 
-def load_fixture_cameras() -> list[Camera]:
+def load_fixture_cameras() -> tuple[Camera, ...]:
     """Load typed synthetic cameras from the fixture source."""
-    return FixtureSource(FIXTURES_ROOT / "api-cameras.json").fetch()
+    return load_fixture_records(FIXTURES_ROOT / "api-cameras.json", model=Camera)
 
 
 def test_cameras_to_frame_contains_private_coordinates_before_indexing() -> None:
@@ -119,10 +119,10 @@ def test_aggregate_cells_shifts_singletons_with_salted_determinism() -> None:
 
 def test_aggregate_cells_uses_salt_to_select_neighboring_singleton_cell() -> None:
     """Different salts should choose different public singleton neighbors."""
-    cameras = load_fixture_cameras()
+    pyromap = load_fixture_cameras()
 
-    first = aggregate_cells(cameras, Config(singleton_cell_shift_salt=SecretStr("alpha")))
-    second = aggregate_cells(cameras, Config(singleton_cell_shift_salt=SecretStr("beta")))
+    first = aggregate_cells(pyromap, Config(singleton_cell_shift_salt=SecretStr("alpha")))
+    second = aggregate_cells(pyromap, Config(singleton_cell_shift_salt=SecretStr("beta")))
 
     assert first["cell"].to_list()[0] == "853968bbfffffff"
     assert second["cell"].to_list()[0] == "85396807fffffff"
