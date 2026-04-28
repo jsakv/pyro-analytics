@@ -10,13 +10,13 @@ The object key is stable across environments. Environment separation belongs in 
 
 ## Source Fixture
 
-`packages/cameras/tests/fixtures/api-cameras.json` is synthetic data shaped like the `GET /api/v1/cameras/` response from the Pyronear Alert API. It mocks the API boundary used by the camera source adapter so tests can run without live credentials.
+`packages/pyromap/tests/fixtures/api-cameras.json` is synthetic data shaped like the `GET /api/v1/cameras/` response from the Pyronear Alert API. It mocks the API boundary used by the camera source adapter so tests can run without live credentials.
 
 The fixture is not a database fixture and must not expose database-only fields. It contains plausible `CameraRead` fields from the OpenAPI contract, including exact coordinates because source data is still private at this boundary.
 
 ## Public Artifact Fixture
 
-`packages/cameras/tests/fixtures/camera-cells.geojson` is synthetic public output. It is safe for downstream map tests and must not contain raw camera identifiers, camera names, exact coordinates, image URLs, backend URLs, credentials, or source payload fragments.
+`packages/pyromap/tests/fixtures/camera-cells.geojson` is synthetic public output. It is safe for downstream map tests and must not contain raw camera identifiers, camera names, exact coordinates, image URLs, backend URLs, credentials, or source payload fragments.
 
 Each public feature is a GeoJSON polygon with this property allowlist:
 

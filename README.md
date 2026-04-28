@@ -4,7 +4,7 @@ Pyronear Analytics is a uv workspace for wildfire data analysis and operational 
 
 ## Requirements
 
-- Python 3.14
+- Python 3.12 or 3.13
 - [uv](https://docs.astral.sh/uv/)
 
 ## Tooling defaults
@@ -24,17 +24,19 @@ uv run pytest
 
 ## Camera publisher
 
-The root CLI exposes camera map publication while domain logic stays in `packages/cameras`:
+The root CLI exposes camera map publication while domain logic stays in `packages/pyromap`:
 
 ```bash
-uv run analytics cameras publish --source fixture --fixture-path packages/cameras/tests/fixtures/api-cameras.json --output camera-cells.geojson
+uv run analytics pyromap publish --source fixture --fixture-path packages/pyromap/tests/fixtures/api-cameras.json --output camera-cells.geojson
 ```
 
 For a larger map demo, use `examples/cameras/demo-api-cameras.json` or the generated `examples/cameras/demo-camera-cells.geojson`. The demo source contains 66 synthetic camera records across fire-prone forest regions in France, Spain, and Germany, with dense cells containing 2, 3, and 4 cameras.
 
 Singleton camera cells are published as deterministic neighboring H3 cells by default, with `CAMERA_MAP_SINGLETON_CELL_SHIFT_SALT` available for production salt configuration.
 
-For API-backed publishing, S3-compatible settings, MinIO notes, object key policy, and the manual runbook, see [docs/camera-publisher-runbook.md](docs/camera-publisher-runbook.md).
+For API-backed publishing, configure backend ingestion via `.dlt/config.toml` and `.dlt/secrets.toml`. S3-compatible settings, MinIO notes, object key policy, and the manual runbook live in [docs/camera-publisher-runbook.md](docs/camera-publisher-runbook.md).
+
+Source and public artifact contracts live in [docs/pyromap-api-contract.md](docs/pyromap-api-contract.md) and [docs/pyromap-artifact-contract.md](docs/pyromap-artifact-contract.md).
 
 ## Development workflow
 
@@ -42,7 +44,7 @@ For API-backed publishing, S3-compatible settings, MinIO notes, object key polic
 uv run ruff format .
 uv run ruff check .
 uv run mypy
-uv run pytest --cov=analytics --cov=packages
+uv run pytest --cov=analytics --cov=sources --cov=pyromap
 uv run analytics --help
 ```
 
@@ -50,7 +52,8 @@ uv run analytics --help
 
 - `src/analytics/`: repository CLI package and Typer app entrypoint
 - `packages/`: workspace packages, added as `packages/*`
-- `packages/cameras/`: reusable camera map publisher library
+- `packages/sources/`: reusable dlt source definitions for backend ingestion
+- `packages/pyromap/`: PyroMap ingestion execution, transformation, and publication code
 - `tests/`: root CLI and workspace configuration tests
 - `pyproject.toml`: lint/type/test/coverage configuration
 
@@ -59,7 +62,7 @@ The root `analytics` package is command wiring only. Domain implementation belon
 ## Lint and type policy
 
 This scaffold preserves strict defaults aligned with the `pyproject 2` ruleset intent:
-- Ruff lint profile remains strict with `target-version = "py39"` for conservative compatibility.
+- Ruff lint profile remains strict with `target-version = "py312"`.
 - Mypy strict settings are enabled by default.
 - Coverage is configured with branch tracking for the root CLI package and workspace package source filtering.
 

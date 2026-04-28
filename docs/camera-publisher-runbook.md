@@ -40,9 +40,9 @@ Use the synthetic fixture path for local validation and CI-like checks. This doe
 
 ```bash
 uv sync
-uv run analytics cameras publish \
+uv run analytics pyromap publish \
   --source fixture \
-  --fixture-path packages/cameras/tests/fixtures/api-cameras.json \
+  --fixture-path packages/pyromap/tests/fixtures/api-cameras.json \
   --output camera-cells.geojson
 ```
 
@@ -55,7 +55,7 @@ fetched=3 published=2 uploaded=1 artifact=camera-cells.geojson
 For a larger demo map, use the example dataset:
 
 ```bash
-uv run analytics cameras publish \
+uv run analytics pyromap publish \
   --source fixture \
   --fixture-path examples/cameras/demo-api-cameras.json \
   --output examples/cameras/demo-camera-cells.geojson
@@ -73,25 +73,37 @@ The search should return no matches.
 
 ## API To S3 Publish
 
-Production publishing uses the API source and S3-compatible publisher:
+Production publishing uses dlt backend ingestion and the S3-compatible publisher. Configure backend ingestion first:
+
+```toml
+# .dlt/config.toml
+[sources.backend]
+pyronear_api_base_url = "https://alertapi.pyronear.org/api/v1/"
+```
+
+```toml
+# .dlt/secrets.toml
+[sources.backend]
+pyronear_api_token = "<token>"
+```
+
+Then configure publication settings:
 
 ```bash
-PYRONEAR_API_URL=https://alertapi.pyronear.org \
-PYRONEAR_API_TOKEN=<token> \
 CAMERA_MAP_S3_ENDPOINT_URL=<s3-endpoint-url> \
 CAMERA_MAP_S3_REGION=<region> \
 CAMERA_MAP_S3_BUCKET=<bucket> \
 CAMERA_MAP_S3_ACCESS_KEY_ID=<access-key-id> \
 CAMERA_MAP_S3_SECRET_ACCESS_KEY=<secret-access-key> \
-uv run analytics cameras publish --source api
+uv run analytics pyromap publish --source api
 ```
 
 Required settings:
 
 | Variable | Purpose | Secret |
 | --- | --- | --- |
-| `PYRONEAR_API_URL` | Pyronear Alert API base URL | No |
-| `PYRONEAR_API_TOKEN` | Bearer token for camera reads | Yes |
+| `.dlt/config.toml sources.backend.pyronear_api_base_url` | Pyronear Alert API base URL | No |
+| `.dlt/secrets.toml sources.backend.pyronear_api_token` | Bearer token for camera reads | Yes |
 | `CAMERA_MAP_H3_RESOLUTION` | Optional H3 publish resolution, default `5` | No |
 | `CAMERA_MAP_SINGLETON_CELL_SHIFT_ENABLED` | Optional singleton privacy shift flag, default `true` | No |
 | `CAMERA_MAP_SINGLETON_CELL_SHIFT_SALT` | Optional salt for deterministic singleton neighbor selection | Yes |

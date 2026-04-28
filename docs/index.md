@@ -4,34 +4,34 @@
 
 `pyro-analytics` is a uv workspace root. The root `src/analytics` package owns the Typer CLI, shared tooling lives at the root, and domain packages belong under `packages/*`.
 
-## Camera package
+## Source and PyroMap packages
 
-`packages/cameras` owns reusable camera map publisher library code. It must remain independent from root CLI wiring in `analytics`.
+`packages/sources` owns reusable dlt source definitions. `packages/pyromap` runs dlt ingestion and owns the camera map transformation/publication code outside dlt. Both must remain independent from root CLI wiring in `analytics`.
 
 ## Camera publish CLI
 
-The root CLI delegates camera map publishing to the `cameras` package:
+The root CLI delegates camera map publishing to the `pyromap` package:
 
 ```bash
-uv run analytics cameras publish --source fixture --fixture-path packages/cameras/tests/fixtures/api-cameras.json --output camera-cells.geojson
+uv run analytics pyromap publish --source fixture --fixture-path packages/pyromap/tests/fixtures/api-cameras.json --output camera-cells.geojson
 ```
 
-For API-backed S3 publication, configure the environment before running:
+For API-backed S3 publication, configure backend ingestion in `.dlt/config.toml` and `.dlt/secrets.toml`, then configure publication settings before running:
 
 ```bash
-PYRONEAR_API_URL=https://alertapi.pyronear.org \
-PYRONEAR_API_TOKEN=... \
 CAMERA_MAP_S3_ENDPOINT_URL=http://localhost:9000 \
 CAMERA_MAP_S3_REGION=us-east-1 \
 CAMERA_MAP_S3_BUCKET=pyronear-public-map-local \
 CAMERA_MAP_S3_ACCESS_KEY_ID=... \
 CAMERA_MAP_S3_SECRET_ACCESS_KEY=... \
-uv run analytics cameras publish --source api
+uv run analytics pyromap publish --source api
 ```
 
 The command prints only summary counts and artifact metadata. It must not print credentials, exact source coordinates, or raw API records.
 
 For the full manual workflow, environment variables, MinIO notes, object key policy, and privacy review checklist, see [Camera Publisher Runbook](camera-publisher-runbook.md).
+
+For source and public artifact contracts, see [PyroMap API Contract](pyromap-api-contract.md) and [PyroMap Artifact Contract](pyromap-artifact-contract.md).
 
 ## Local docs workflow
 
