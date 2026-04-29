@@ -79,7 +79,7 @@ class Config(BaseModel):
     ingestion_pipeline_name: str = "pyromap"
     ingestion_dataset_name: str = "pyromap_data"
     ingestion_destination: str = "duckdb"
-    ingestion_pipelines_dir: Path = Path(".dlt/pipelines")
+    ingestion_pipelines_dir: Path = Path(".cache/pyromap/dlt-pipelines")
     location_policy: LocationPolicy = Field(default_factory=lambda: DEFAULT_LOCATION_POLICY)
     s3_endpoint_url: str | None = None
     s3_region: str | None = None
@@ -127,7 +127,8 @@ class Config(BaseModel):
             ingestion_pipeline_name=_optional_env(source, "PYROMAP_DLT_PIPELINE_NAME") or "pyromap",
             ingestion_dataset_name=_optional_env(source, "PYROMAP_DLT_DATASET_NAME") or "pyromap_data",
             ingestion_destination=_optional_env(source, "PYROMAP_DLT_DESTINATION") or "duckdb",
-            ingestion_pipelines_dir=_optional_path(source, "PYROMAP_DLT_PIPELINES_DIR") or Path(".dlt/pipelines"),
+            ingestion_pipelines_dir=_optional_path(source, "PYROMAP_DLT_PIPELINES_DIR")
+            or Path(".cache/pyromap/dlt-pipelines"),
             location_policy=location_policy,
             s3_endpoint_url=_optional_env(source, "CAMERA_MAP_S3_ENDPOINT_URL"),
             s3_region=_optional_env(source, "CAMERA_MAP_S3_REGION"),

@@ -8,8 +8,6 @@ __pycache__/
 .coverage
 htmlcov/
 .venv/
-.dlt/secrets.toml
-.dlt/*.secrets.toml
-.dlt/pipelines/
+.cache/pyromap/
 *.duckdb
 *.duckdb.wal

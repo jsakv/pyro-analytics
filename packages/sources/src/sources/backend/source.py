@@ -7,8 +7,6 @@ from collections.abc import Iterator
 import dlt
 from dlt.sources.rest_api import RESTAPIConfig, rest_api_resources
 
-DEFAULT_API_BASE_URL = "https://alertapi.pyronear.org/api/v1/"
-
 
 def normalize_api_base_url(api_base_url: str) -> str:
     """Return a base URL suitable for the backend API v1 resources."""

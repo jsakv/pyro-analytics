@@ -19,7 +19,7 @@ def test_default_config_uses_safe_location_policy() -> None:
     assert config.ingestion_pipeline_name == "pyromap"
     assert config.ingestion_dataset_name == "pyromap_data"
     assert config.ingestion_destination == "duckdb"
-    assert config.ingestion_pipelines_dir == Path(".dlt/pipelines")
+    assert config.ingestion_pipelines_dir == Path(".cache/pyromap/dlt-pipelines")
 
 
 def test_from_env_loads_api_fixture_policy_and_minio_settings() -> None:
@@ -29,7 +29,7 @@ def test_from_env_loads_api_fixture_policy_and_minio_settings() -> None:
         "PYROMAP_DLT_PIPELINE_NAME": "pyromap-local",
         "PYROMAP_DLT_DATASET_NAME": "pyromap_local_data",
         "PYROMAP_DLT_DESTINATION": "duckdb",
-        "PYROMAP_DLT_PIPELINES_DIR": ".dlt/test-pipelines",
+        "PYROMAP_DLT_PIPELINES_DIR": ".cache/pyromap/test-dlt-pipelines",
         "CAMERA_MAP_H3_RESOLUTION": "5",
         "CAMERA_MAP_PUBLIC_PROPERTIES": "cell, camera_count, camera_count_bucket",
         "CAMERA_MAP_S3_ENDPOINT_URL": "http://localhost:9000",
@@ -46,7 +46,7 @@ def test_from_env_loads_api_fixture_policy_and_minio_settings() -> None:
     assert config.ingestion_pipeline_name == "pyromap-local"
     assert config.ingestion_dataset_name == "pyromap_local_data"
     assert config.ingestion_destination == "duckdb"
-    assert config.ingestion_pipelines_dir == Path(".dlt/test-pipelines")
+    assert config.ingestion_pipelines_dir == Path(".cache/pyromap/test-dlt-pipelines")
     assert config.publish_resolution == 5
     assert config.public_properties == ("cell", "camera_count", "camera_count_bucket")
     assert config.s3_endpoint_url == "http://localhost:9000"
