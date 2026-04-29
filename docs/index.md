@@ -16,9 +16,11 @@ The root CLI delegates camera map publishing to the `pyromap` package:
 uv run analytics pyromap publish --source fixture --fixture-path packages/pyromap/tests/fixtures/api-cameras.json --output camera-cells.geojson
 ```
 
-For API-backed S3 publication, configure backend ingestion in `.dlt/config.toml` and `.dlt/secrets.toml`, then configure publication settings before running:
+For API-backed S3 publication, configure backend ingestion and publication settings before running:
 
 ```bash
+SOURCES__BACKEND__PYRONEAR_API_BASE_URL=https://alertapi.pyronear.org/api/v1/ \
+SOURCES__BACKEND__PYRONEAR_API_TOKEN=... \
 CAMERA_MAP_S3_ENDPOINT_URL=http://localhost:9000 \
 CAMERA_MAP_S3_REGION=us-east-1 \
 CAMERA_MAP_S3_BUCKET=pyronear-public-map-local \

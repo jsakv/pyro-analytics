@@ -34,7 +34,7 @@ For a larger map demo, use `examples/cameras/demo-api-cameras.json` or the gener
 
 Singleton camera cells are published as deterministic neighboring H3 cells by default, with `CAMERA_MAP_SINGLETON_CELL_SHIFT_SALT` available for production salt configuration.
 
-For API-backed publishing, configure backend ingestion via `.dlt/config.toml` and `.dlt/secrets.toml`. S3-compatible settings, MinIO notes, object key policy, and the manual runbook live in [docs/camera-publisher-runbook.md](docs/camera-publisher-runbook.md).
+For API-backed publishing, configure backend ingestion with dlt environment variables. S3-compatible settings, MinIO notes, object key policy, and the manual runbook live in [docs/camera-publisher-runbook.md](docs/camera-publisher-runbook.md).
 
 Source and public artifact contracts live in [docs/pyromap-api-contract.md](docs/pyromap-api-contract.md) and [docs/pyromap-artifact-contract.md](docs/pyromap-artifact-contract.md).
 

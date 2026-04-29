@@ -73,23 +73,11 @@ The search should return no matches.
 
 ## API To S3 Publish
 
-Production publishing uses dlt backend ingestion and the S3-compatible publisher. Configure backend ingestion first:
-
-```toml
-# .dlt/config.toml
-[sources.backend]
-pyronear_api_base_url = "https://alertapi.pyronear.org/api/v1/"
-```
-
-```toml
-# .dlt/secrets.toml
-[sources.backend]
-pyronear_api_token = "<token>"
-```
-
-Then configure publication settings:
+Production publishing uses dlt backend ingestion and the S3-compatible publisher. Configure backend ingestion and publication settings together:
 
 ```bash
+SOURCES__BACKEND__PYRONEAR_API_BASE_URL=https://alertapi.pyronear.org/api/v1/ \
+SOURCES__BACKEND__PYRONEAR_API_TOKEN=<token> \
 CAMERA_MAP_S3_ENDPOINT_URL=<s3-endpoint-url> \
 CAMERA_MAP_S3_REGION=<region> \
 CAMERA_MAP_S3_BUCKET=<bucket> \
@@ -102,8 +90,8 @@ Required settings:
 
 | Variable | Purpose | Secret |
 | --- | --- | --- |
-| `.dlt/config.toml sources.backend.pyronear_api_base_url` | Pyronear Alert API base URL | No |
-| `.dlt/secrets.toml sources.backend.pyronear_api_token` | Bearer token for camera reads | Yes |
+| `SOURCES__BACKEND__PYRONEAR_API_BASE_URL` | Pyronear Alert API base URL | No |
+| `SOURCES__BACKEND__PYRONEAR_API_TOKEN` | Bearer token for camera reads | Yes |
 | `CAMERA_MAP_H3_RESOLUTION` | Optional H3 publish resolution, default `5` | No |
 | `CAMERA_MAP_SINGLETON_CELL_SHIFT_ENABLED` | Optional singleton privacy shift flag, default `true` | No |
 | `CAMERA_MAP_SINGLETON_CELL_SHIFT_SALT` | Optional salt for deterministic singleton neighbor selection | Yes |

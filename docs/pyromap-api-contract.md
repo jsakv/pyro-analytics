@@ -2,8 +2,8 @@
 
 The backend dlt source follows the current Pyronear Alert API camera read contract:
 
-- Base URL is configured in `.dlt/config.toml`.
-- Bearer token is configured in `.dlt/secrets.toml`.
+- Base URL is configured with `SOURCES__BACKEND__PYRONEAR_API_BASE_URL`.
+- Bearer token is configured with `SOURCES__BACKEND__PYRONEAR_API_TOKEN`.
 - Camera records are fetched with `GET /api/v1/cameras/`.
 - The endpoint returns a JSON array of `CameraRead` records.
 - Pyromap validates ingested records as `pyromap.Camera` before transformation.
