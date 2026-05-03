@@ -12,7 +12,7 @@
     <img src="https://img.shields.io/badge/code%20style-ruff-d7ff64" alt="Code style: Ruff" />
 </p>
 
-Pyronear Analytics helps analyze data produced by deployed stations and backend systems, from embedded-computer telemetry to platform usage signals. The root `analytics` package owns the repository CLI, while domain libraries live under `packages/*` so contributors can work on focused analysis packages without losing the workspace-level tooling.
+Pyronear Analytics helps analyze data produced by deployed stations and backend systems, from embedded-computer telemetry to platform usage signals. The `analytics` package provides the main CLI, and each domain package under `packages/*` can focus on one analysis area.
 
 <!-- TOC -->
 
@@ -86,7 +86,7 @@ For API-backed publishing, configure backend ingestion with dlt environment
 variables. S3-compatible settings, MinIO notes, object key policy, and the manual
 runbook live in [docs/camera-publisher-runbook.md](docs/camera-publisher-runbook.md).
 
-Source and public artifact contracts live in [docs/pyromap-api-contract.md](docs/pyromap-api-contract.md) and [docs/pyromap-artifact-contract.md](docs/pyromap-artifact-contract.md).
+The Pyronear API source contract lives in [docs/pyronear-api.md](docs/pyronear-api.md). The public artifact contract lives in [docs/pyromap-artifact-contract.md](docs/pyromap-artifact-contract.md).
 
 ## Examples
 
@@ -120,6 +120,12 @@ Useful contribution paths from here:
 ## Documentation
 
 Project documentation lives in [docs](docs/index.md). Start with the camera publisher runbook when working on operational publication flows, then use the API and artifact contracts to understand the data boundaries.
+
+Build the Furo documentation locally with:
+
+```bash
+make build-docs
+```
 
 ## Contributing
 

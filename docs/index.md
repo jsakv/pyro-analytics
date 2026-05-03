@@ -1,52 +1,76 @@
-# Pyronear Analytics Documentation
+# Pyronear Analytics
 
-## Workspace layout
+<div class="analytics-hero">
+  <p class="analytics-kicker"></p>
+  <p class="analytics-lead">
+    Pyronear Analytics is the home for operational analysis built from data produced
+    by deployed stations and backend systems. It turns embedded-computer telemetry,
+    camera metadata, backend records, and platform usage signals into reviewable
+    artifacts that can support monitoring, product decisions, and public-facing
+    tools.
+  </p>
+</div>
 
-`pyro-analytics` is a uv workspace root. The root `src/analytics` package owns the Typer CLI, shared tooling lives at the root, and domain packages belong under `packages/*`.
+<div class="analytics-card-grid analytics-card-grid-three">
+  <a class="analytics-card" href="quickstart.html">
+    <span class="analytics-card-label">Guide</span>
+    <strong>Quickstart</strong>
+    <span>Install the workspace, run checks, and publish a fixture artifact.</span>
+  </a>
+  <a class="analytics-card" href="pyronear-api.html">
+    <span class="analytics-card-label">Source</span>
+    <strong>Pyronear API</strong>
+    <span>Review the implemented dlt source boundary and camera resource contract.</span>
+  </a>
+  <a class="analytics-card" href="pyromap.html">
+    <span class="analytics-card-label">Workflow</span>
+    <strong>Pyromap</strong>
+    <span>Understand the camera map workflow, contracts, and runbooks.</span>
+  </a>
+</div>
 
-## Source and Pyromap packages
+Guides are hands-on paths, Sources describe ingestion contracts, Workflows
+explain end-to-end applications, and Package Reference is generated from the
+Python modules.
 
-`packages/sources` owns reusable dlt source definitions. `packages/pyromap` runs dlt ingestion and owns the camera map transformation/publication code outside dlt. Both must remain independent from root CLI wiring in `analytics`.
+```{toctree}
+:maxdepth: 2
+:hidden:
 
-## Camera publish CLI
-
-The root CLI delegates camera map publishing to the `pyromap` package:
-
-```bash
-uv run analytics pyromap publish --source fixture --fixture-path packages/pyromap/tests/fixtures/api-cameras.json --output camera-cells.geojson
+Home <self>
 ```
 
-For API-backed S3 publication, configure backend ingestion and publication settings before running:
+```{toctree}
+:maxdepth: 2
+:caption: GUIDES
+:hidden:
 
-```bash
-SOURCES__BACKEND__PYRONEAR_API_BASE_URL=https://alertapi.pyronear.org/api/v1/ \
-SOURCES__BACKEND__PYRONEAR_API_TOKEN=... \
-CAMERA_MAP_S3_ENDPOINT_URL=http://localhost:9000 \
-CAMERA_MAP_S3_REGION=us-east-1 \
-CAMERA_MAP_S3_BUCKET=pyronear-public-map-local \
-CAMERA_MAP_S3_ACCESS_KEY_ID=... \
-CAMERA_MAP_S3_SECRET_ACCESS_KEY=... \
-uv run analytics pyromap publish --source api
+Quickstart <quickstart>
 ```
 
-The command prints only summary counts and artifact metadata. It must not print credentials, exact source coordinates, or raw API records.
+```{toctree}
+:maxdepth: 2
+:caption: SOURCES
+:hidden:
 
-For the full manual workflow, environment variables, MinIO notes, object key policy, and privacy review checklist, see [Camera Publisher Runbook](camera-publisher-runbook.md).
-
-For source and public artifact contracts, see [Pyromap API Contract](pyromap-api-contract.md) and [Pyromap Artifact Contract](pyromap-artifact-contract.md).
-
-## Local docs workflow
-
-```bash
-uv sync
-uv run pytest
+Overview <sources>
+Pyronear API <pyronear-api>
 ```
 
-## Development checks
+```{toctree}
+:maxdepth: 2
+:caption: WORKFLOWS
+:hidden:
 
-```bash
-uv run ruff format . --check
-uv run ruff check .
-uv run mypy
-uv run pytest
+Pyromap <pyromap>
+```
+
+```{toctree}
+:maxdepth: 1
+:caption: PACKAGE REFERENCE
+:hidden:
+
+Analytics <reference/analytics/analytics>
+Sources <reference/sources/sources>
+Pyromap <reference/pyromap/pyromap>
 ```
