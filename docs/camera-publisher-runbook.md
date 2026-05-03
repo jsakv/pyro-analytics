@@ -2,23 +2,9 @@
 
 This runbook is for maintainers publishing the public camera map artifact from `pyro-analytics`.
 
-## Artifact Contract
-
-The publisher writes one public GeoJSON artifact:
-
-```text
-camera-cells.geojson
-```
-
-The object key is intentionally stable and unversioned. Environment separation belongs in bucket configuration, not path prefixes or timestamped object names. This keeps the `pyro-map` consumer contract simple and cache behavior explicit.
-
-Public features may contain only:
-
-- `cell`
-- `camera_count`
-- `camera_count_bucket`
-
-Raw camera coordinates and private source fields must never be published. Do not publish `lat`, `lon`, camera names, camera IDs, organization IDs, image URLs, backend URLs, credentials, or raw API records.
+Before publishing, review the [Pyronear API](pyronear-api.md) source contract
+and the [Pyromap Artifact](pyromap-artifact-contract.md) public artifact
+contract.
 
 ## Location Precision Review
 
@@ -32,7 +18,8 @@ Review checklist:
 - Confirm singleton shifting remains enabled unless a private fixture comparison requires exact cells.
 - Confirm `CAMERA_MAP_PUBLIC_PROPERTIES` stays within the approved property allowlist.
 - Inspect a generated fixture artifact before uploading.
-- Treat any property change as a cross-repository contract change with `pyro-map`.
+- Treat any artifact property change as a cross-repository contract change with
+  `pyro-map`.
 
 ## Local Fixture Publish
 
