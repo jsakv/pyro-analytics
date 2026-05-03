@@ -1,0 +1,108 @@
+h1 {
+    font-size: 200%;
+}
+
+.analytics-hero {
+    border-left: 4px solid var(--color-brand-primary);
+    margin: 1.5rem 0 2rem;
+    padding: 0.2rem 0 0.2rem 1.25rem;
+}
+
+.analytics-kicker {
+    color: var(--color-brand-primary);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.35rem;
+    text-transform: uppercase;
+}
+
+.analytics-lead {
+    font-size: 1.2rem;
+    line-height: 1.55;
+    margin-bottom: 0.65rem;
+}
+
+.analytics-card-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    margin: 1.5rem 0 2rem;
+}
+
+.analytics-card-grid-three {
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+}
+
+.analytics-card {
+    background: var(--color-sidebar-background);
+    border: 1px solid var(--color-background-border);
+    border-radius: 0.6rem;
+    color: var(--color-foreground-primary);
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 1rem;
+    text-decoration: none;
+}
+
+.analytics-card:hover {
+    border-color: var(--color-brand-primary);
+    text-decoration: none;
+}
+
+.analytics-card strong {
+    font-size: 1.05rem;
+}
+
+.analytics-card span:last-child {
+    color: var(--color-foreground-secondary);
+    font-size: 0.95rem;
+    line-height: 1.45;
+}
+
+.analytics-card-label {
+    color: var(--color-brand-primary);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.analytics-path-list {
+    border: 1px solid var(--color-background-border);
+    border-radius: 0.6rem;
+    margin: 1.25rem 0 1.5rem;
+    overflow: hidden;
+}
+
+.analytics-path-list div {
+    align-items: baseline;
+    border-bottom: 1px solid var(--color-background-border);
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: minmax(10rem, 0.45fr) 1fr;
+    padding: 0.85rem 1rem;
+}
+
+.analytics-path-list div:last-child {
+    border-bottom: 0;
+}
+
+.analytics-path-list span {
+    color: var(--color-foreground-secondary);
+}
+
+@media (max-width: 640px) {
+    .analytics-path-list div {
+        grid-template-columns: 1fr;
+        gap: 0.35rem;
+    }
+}
+
+/* Github button */
+
+.github-repo {
+    display: flex;
+    justify-content: center;
+}
