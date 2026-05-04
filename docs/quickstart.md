@@ -17,7 +17,7 @@ uv sync
 ## Inspect The CLI
 
 ```bash
-uv run analytics --help
+uv run pyro-analytics --help
 ```
 
 ## Run The Test Suite
@@ -29,7 +29,7 @@ uv run pytest
 ## Publish A Fixture Artifact
 
 ```bash
-uv run analytics pyromap publish --source fixture --fixture-path packages/pyromap/tests/fixtures/api-cameras.json --output camera-cells.geojson
+uv run pyro-analytics pyromap publish --source fixture --fixture-path packages/pyromap/tests/fixtures/api-cameras.json --output camera-cells.geojson
 ```
 
 The command writes `camera-cells.geojson`, a public GeoJSON artifact that groups

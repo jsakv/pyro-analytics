@@ -19,7 +19,7 @@ dependencies = [
 ]
 
 [project.scripts]
-analytics = "analytics.cli:app"
+pyro-analytics = "analytics.cli:app"
 
 [dependency-groups]
 dev = [

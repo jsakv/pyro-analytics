@@ -12,7 +12,7 @@
     <img src="https://img.shields.io/badge/code%20style-ruff-d7ff64" alt="Code style: Ruff" />
 </p>
 
-Pyronear Analytics helps analyze data produced by deployed stations and backend systems, from embedded-computer telemetry to platform usage signals. The `analytics` package provides the main CLI, and each domain package under `packages/*` can focus on one analysis area.
+Pyronear Analytics helps analyze data produced by deployed stations and backend systems, from embedded-computer telemetry to platform usage signals. The `analytics` package provides the `pyro-analytics` CLI, and each domain package under `packages/*` can focus on one analysis area.
 
 <!-- TOC -->
 
@@ -59,7 +59,7 @@ uv run pytest
 ## Usage
 
 The workspace is organized around small operational analytics flows that can be
-run from the root `analytics` CLI. Today, the main shipped flow publishes camera
+run from the root `pyro-analytics` CLI. Today, the main shipped flow publishes camera
 coverage data for map consumers; future packages can follow the same pattern for
 station telemetry, backend health signals, and platform usage analysis.
 
@@ -73,7 +73,7 @@ Use the fixture source when you want to try the flow locally without backend
 credentials:
 
 ```bash
-uv run analytics pyromap publish --source fixture --fixture-path packages/pyromap/tests/fixtures/api-cameras.json --output camera-cells.geojson
+uv run pyro-analytics pyromap publish --source fixture --fixture-path packages/pyromap/tests/fixtures/api-cameras.json --output camera-cells.geojson
 ```
 
 This command writes `camera-cells.geojson`, a shareable artifact that groups
@@ -107,7 +107,7 @@ shifts, or the shape of the published GeoJSON.
 To regenerate a local artifact from a small fixture while iterating:
 
 ```bash
-uv run analytics pyromap publish --source fixture --fixture-path packages/pyromap/tests/fixtures/api-cameras.json --output camera-cells.geojson
+uv run pyro-analytics pyromap publish --source fixture --fixture-path packages/pyromap/tests/fixtures/api-cameras.json --output camera-cells.geojson
 ```
 
 Useful contribution paths from here:
@@ -151,7 +151,7 @@ uv run ruff format .
 uv run ruff check .
 uv run mypy
 uv run pytest --cov=analytics --cov=sources --cov=pyromap
-uv run analytics --help
+uv run pyro-analytics --help
 ```
 
 Ruff remains strict with `target-version = "py312"`, mypy strict settings are enabled by default, and coverage is configured with branch tracking for the root CLI package and workspace package source filtering. If you relax any strictness defaults, document the rationale in this README to keep team expectations explicit.

@@ -27,7 +27,7 @@ Use the synthetic fixture path for local validation and CI-like checks. This doe
 
 ```bash
 uv sync
-uv run analytics pyromap publish \
+uv run pyro-analytics pyromap publish \
   --source fixture \
   --fixture-path packages/pyromap/tests/fixtures/api-cameras.json \
   --output camera-cells.geojson
@@ -42,7 +42,7 @@ fetched=3 published=2 uploaded=1 artifact=camera-cells.geojson
 For a larger demo map, use the example dataset:
 
 ```bash
-uv run analytics pyromap publish \
+uv run pyro-analytics pyromap publish \
   --source fixture \
   --fixture-path examples/cameras/demo-api-cameras.json \
   --output examples/cameras/demo-camera-cells.geojson
@@ -70,7 +70,7 @@ CAMERA_MAP_S3_REGION=<region> \
 CAMERA_MAP_S3_BUCKET=<bucket> \
 CAMERA_MAP_S3_ACCESS_KEY_ID=<access-key-id> \
 CAMERA_MAP_S3_SECRET_ACCESS_KEY=<secret-access-key> \
-uv run analytics pyromap publish --source api
+uv run pyro-analytics pyromap publish --source api
 ```
 
 Required settings:
