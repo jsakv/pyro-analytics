@@ -976,6 +976,7 @@ dependencies = [
     { name = "polars-h3" },
     { name = "pydantic" },
     { name = "sources" },
+    { name = "typer" },
 ]
 
 [package.metadata]
@@ -989,6 +990,7 @@ requires-dist = [
     { name = "polars-h3" },
     { name = "pydantic" },
     { name = "sources", editable = "packages/sources" },
+    { name = "typer" },
 ]
 
 [[package]]

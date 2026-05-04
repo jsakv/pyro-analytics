@@ -11,7 +11,7 @@ def test_root_is_uv_workspace() -> None:
     root = Path(__file__).resolve().parents[1]
     config = tomllib.loads((root / "pyproject.toml").read_text())
 
-    assert config["project"]["scripts"]["analytics"] == "analytics.cli:app"
+    assert config["project"]["scripts"]["pyro-analytics"] == "analytics.__main__:main"
     assert config["project"]["dependencies"] == ["sources", "pyromap", "typer"]
     assert config["tool"]["uv"]["workspace"]["members"] == ["packages/*"]
     assert config["tool"]["uv"]["sources"] == {

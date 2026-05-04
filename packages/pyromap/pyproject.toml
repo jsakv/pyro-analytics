@@ -15,6 +15,7 @@ dependencies = [
     "polars-h3",
     "pydantic",
     "sources",
+    "typer",
 ]
 
 [tool.uv.sources]
