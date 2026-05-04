@@ -11,8 +11,10 @@ without live backend or S3 credentials.
 ## Install The Workspace
 
 ```bash
-uv sync
+make setup
 ```
+
+This installs the locked workspace and the local pre-commit Git hooks.
 
 ## Inspect The CLI
 

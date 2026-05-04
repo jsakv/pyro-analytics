@@ -7,10 +7,17 @@ BUILDDIR = docs/_build
 PYTHON ?= uv run python
 DOCS_PORT ?= 8000
 
-.PHONY: sync format lint type test test-cov html build-docs docs serve-docs check
+.PHONY: setup install sync install-hooks format lint type test test-cov html build-docs docs serve-docs check
+
+setup: sync install-hooks
+
+install: setup
 
 sync:
 	uv sync
+
+install-hooks:
+	uv run pre-commit install
 
 format:
 	uv run ruff format .

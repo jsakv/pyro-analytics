@@ -49,10 +49,11 @@ This workspace uses:
 
 ### Installation
 
-Clone the repository, install the locked workspace, and run the tests:
+Clone the repository, install the locked workspace, install Git hooks, and run
+the tests:
 
 ```bash
-uv sync
+make setup
 uv run pytest
 ```
 
